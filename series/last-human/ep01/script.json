@@ -1,0 +1,53 @@
+{
+  "series": "last-human",
+  "episode": 1,
+  "title": "Day 1",
+  "voice": "am_michael",
+  "speed": 0.93,
+  "shots": [
+    {
+      "id": "s01_aerial",
+      "pad": 0.6,
+      "line": "What if you woke up tomorrow... and every other human on Earth was gone? Not dead. Just... gone."
+    },
+    {
+      "id": "s02_door",
+      "pad": 0.4,
+      "line": "Kai did. Six twelve a.m. No traffic. No voices. No sirens. Just a city of ten million... holding its breath."
+    },
+    {
+      "id": "s03_cars",
+      "pad": 0.4,
+      "line": "Cars sit exactly where they stopped, engines still warm. And the traffic lights keep changing... for no one."
+    },
+    {
+      "id": "s04_walk",
+      "pad": 0.4,
+      "line": "He walks down the middle of the road, shouting until his voice breaks. He calls his mom. It rings. And rings. And rings."
+    },
+    {
+      "id": "s05_power",
+      "pad": 0.3,
+      "line": "Here's the scary part. Without us, power plants run on autopilot. But with no one watching them... only for a few hours."
+    },
+    {
+      "id": "s06_blackout",
+      "pad": 0.3,
+      "line": "By sunset, the stations start failing. And one by one, district by district... the lights go out."
+    },
+    {
+      "id": "s07_rooftop",
+      "pad": 0.5,
+      "line": "Total darkness. No glow on the horizon. Just stars he has never seen before. The first night of the rest of his life."
+    },
+    {
+      "id": "s08_light",
+      "pad": 2.8,
+      "line": "And then... far across the city... a single light switched on."
+    }
+  ],
+  "end_card": {
+    "top": "LAST HUMAN",
+    "bottom": "EPISODE 2 — follow so you don't miss it"
+  }
+}
