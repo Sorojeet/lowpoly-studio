@@ -1,8 +1,0 @@
-flask
-gunicorn
-polars
-duckdb
-pyarrow
-fastexcel
-xlsxwriter
-reportlab
