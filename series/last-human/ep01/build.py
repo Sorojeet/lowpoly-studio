@@ -36,24 +36,24 @@ for i in ids:
 # ---------------------------------------------------------------- music (D minor)
 music = S.Track(TOTAL)
 D = [[50, 57, 62, 65], [46, 53, 58, 62], [53, 57, 60, 65], [48, 55, 60, 64]]   # Dm  Bb  F  C
-music.add(S.pad(D * 3, 8.0, cutoff=800, gain=0.16), 0.0)
-music.add(S.drone(38, TOTAL, gain=0.10), 0.0)
-music.add(S.pulse(starts["s07_rooftop"] - starts["s05_power"], bpm=52, gain=0.30, start_gain=0.05), starts["s05_power"])
-music.duck(voice, depth=0.35)
+music.add(S.pad(D * 3, 8.0, cutoff=800, gain=0.055), 0.0)
+music.add(S.drone(38, TOTAL, gain=0.035), 0.0)
+music.add(S.pulse(starts["s07_rooftop"] - starts["s05_power"], bpm=52, gain=0.16, start_gain=0.02), starts["s05_power"])
+music.duck(voice, depth=0.5)
 # the drop: silence the bed just before the light, then the hit
 on = st("s08_light", 3.2)
 fade_a, fade_b = int((on - 1.2) * S.SR), int((on - 0.05) * S.SR)
 music.x[fade_a:fade_b] *= np.linspace(1, 0, fade_b - fade_a)
 music.x[fade_b:] = 0
 music.add(S.riser(1.4, 0.10), on - 1.4)
-music.add(S.impact(4.0, 0.55), on)
+music.add(S.impact(4.0, 0.35), on)
 music.add(S.bell(74, 5.0, 0.12), on + 0.05)
 music.add(S.bell(81, 4.0, 0.07), on + 0.9)
 
 # ---------------------------------------------------------------- sfx
 fx = S.Track(TOTAL)
-fx.add(S.wind(starts["s06_blackout"], 0.05), 0.0)
-fx.add(S.birds(starts["s05_power"], density=0.9, gain=0.05), 0.0)
+fx.add(S.wind(starts["s06_blackout"], 0.025), 0.0)
+fx.add(S.birds(starts["s05_power"], density=0.9, gain=0.03), 0.0)
 for sec in (3.6, 5.6, 6.6):                       # traffic light relays
     fx.add(S.click(0.18), st("s03_cars", sec))
 for sec in (4.9, 6.25, 7.6):                      # "It rings. And rings. And rings."
@@ -71,13 +71,18 @@ fx.add(S.crickets(TOTAL - starts["s07_rooftop"], 0.012), starts["s07_rooftop"])
 fx.add(S.click(0.35), on)
 
 mix = voice.mix(music, fx)
+rms = lambda a: 20 * np.log10(np.sqrt(np.mean(a[a != 0] ** 2)) + 1e-9)
+print("rms dB  voice %.1f  music %.1f  fx %.1f" % (rms(voice.x), rms(music.x), rms(fx.x)))
 mix = mix[: int(TOTAL * S.SR)]
-mix *= 0.89 / np.abs(mix).max()
+mix *= 0.75 / np.percentile(np.abs(voice.x[voice.x != 0]), 99.5)   # voice sets the level
+mix = np.tanh(mix * 1.1) / np.tanh(1.1) * 0.95                           # soft-limit hits
 fade = int(0.8 * S.SR); mix[-fade:] *= np.linspace(1, 0, fade)
 wav = os.path.join(EP, "mix.wav")
 sf.write(wav, mix, S.SR)
 
 # ---------------------------------------------------------------- picture
+if "--audio-only" in sys.argv:
+    print("mix", wav, round(TOTAL, 2)); sys.exit()
 shots = [os.path.join(EP, "shots", f"{i}.mp4") for i in ids]
 clean = A.concat(shots, os.path.join(EP, "ep01_clean.mp4"))
 events = [(st(i), timing[i]["voice"], s["line"]) for i, s in zip(ids, spec["shots"])]

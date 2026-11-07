@@ -76,16 +76,12 @@ def frame(frames_dir_or_path, f):
     bpy.ops.render.render(write_still=True)
 
 
-GLOW = ("split[a][b];[b]lutyuv=y='if(gt(val,205),val,16)':u=128:v=128,gblur=sigma=18[g];"
-        "[a][g]blend=all_mode=screen:all_opacity=0.55")
+GLOW = ("format=gbrp,split[a][b];[b]lutrgb=r='if(gt(val,200),val,0)':g='if(gt(val,200),val,0)':b='if(gt(val,200),val,0)',"
+        "gblur=sigma=18[g];[a][g]blend=all_mode=screen:all_opacity=0.5")
 
 
-def render_shot(out_mp4, glow=True, grade="", keep_frames=False):
-    """Render the scene's frame range and encode to out_mp4 (atomic rename)."""
-    sc = bpy.context.scene
-    tmp = tempfile.mkdtemp(prefix="shot_", dir=os.path.dirname(os.path.abspath(out_mp4)))
-    sc.render.filepath = os.path.join(tmp, "f_")
-    bpy.ops.render.render(animation=True)
+def encode(frames_dir, out_mp4, start=1, glow=True, grade=""):
+    """Encode a folder of f_####.jpg frames to an mp4 (atomic rename)."""
     vf = f"scale={W}:{H}:flags=lanczos"
     if glow:
         vf += "," + GLOW
@@ -93,11 +89,26 @@ def render_shot(out_mp4, glow=True, grade="", keep_frames=False):
         vf += "," + grade
     vf += ",format=yuv420p"
     part = out_mp4[:-4] + ".part.mp4"
-    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS), "-start_number", str(sc.frame_start),
-           "-i", os.path.join(tmp, "f_%04d.jpg"), "-filter_complex", vf, "-c:v", "libx264",
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS), "-start_number", str(start),
+           "-i", os.path.join(frames_dir, "f_%04d.jpg"), "-filter_complex", vf, "-c:v", "libx264",
            "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p", "-r", str(FPS), part]
     subprocess.run(cmd, check=True)
     os.replace(part, out_mp4)
-    if not keep_frames:
-        shutil.rmtree(tmp, ignore_errors=True)
     return out_mp4
+
+
+def render_shot(out_mp4, frames_dir=None, glow=True, grade=""):
+    """Render the scene's frame range into frames_dir (kept, so re-grading needs
+    no re-render; existing frames are skipped), then encode to out_mp4."""
+    sc = bpy.context.scene
+    frames_dir = frames_dir or out_mp4[:-4] + "_frames"
+    os.makedirs(frames_dir, exist_ok=True)
+    for f in range(sc.frame_start, sc.frame_end + 1):
+        p = os.path.join(frames_dir, f"f_{f:04d}.jpg")
+        if os.path.exists(p) and os.path.getsize(p) > 0:
+            continue
+        sc.frame_set(f)
+        sc.render.filepath = p[:-4] + ".tmp.jpg"
+        bpy.ops.render.render(write_still=True)
+        os.replace(sc.render.filepath, p)
+    return encode(frames_dir, out_mp4, sc.frame_start, glow, grade)

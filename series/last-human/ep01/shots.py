@@ -251,4 +251,4 @@ if __name__ == "__main__":
         f = int(sys.argv[sys.argv.index("--still") + 1])
         R.frame(os.path.join(EP, "stills", f"{shot}_{f:04d}.jpg"), f)
     else:
-        R.render_shot(os.path.join(EP, "shots", f"{shot}.mp4"))
+        R.render_shot(os.path.join(EP, "shots", f"{shot}.mp4"), os.path.join(EP, "frames", shot))

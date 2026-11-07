@@ -95,7 +95,7 @@ def finish(video, audio_wav, out, ass=None, fade_in=0.4, fade_out=0.0, total=Non
         cmd += ["-vf", ",".join(vf), "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p"]
     else:
         cmd += ["-c:v", "copy"]
-    cmd += ["-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", part]
+    cmd += ["-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", part]
     run(cmd)
     os.replace(part, out)
     return out
