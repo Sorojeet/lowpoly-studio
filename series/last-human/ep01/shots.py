@@ -204,8 +204,10 @@ def s07_rooftop(n):
     c1 = (ex - ux * 6.0 + sx * 2.4, ey - uy * 6.0 + sy * 2.4, top + 3.2)
     cam, tgt = R.camera(c0, (ex, ey, top + 1), lens=26)
     R.move(cam, [(1, c0), (n, c1)])
-    R.move(tgt, [(1, (ex + ux * 6, ey + uy * 6, top + 0.8)), (at("s07_rooftop", 2.2), (ex + ux * 30, ey + uy * 30, top + 14)),
-                 (at("s07_rooftop", 6.0), (ex + ux * 40, ey + uy * 40, top + 40)), (n, (ex + ux * 60, ey + uy * 60, top + 20))])
+    # dark horizon with Kai -> tilt up to the stars -> settle back on Kai
+    R.move(tgt, [(1, (ex + ux * 6, ey + uy * 6, top + 0.6)), (at("s07_rooftop", 2.6), (ex + ux * 8, ey + uy * 8, top + 1.2)),
+                 (at("s07_rooftop", 4.6), (ex + ux * 30, ey + uy * 30, top + 34)), (at("s07_rooftop", 5.8), (ex + ux * 30, ey + uy * 30, top + 36)),
+                 (n - 15, (ex + ux * 7, ey + uy * 7, top + 0.9)), (n, (ex + ux * 7, ey + uy * 7, top + 0.9))])
 
 
 def s08_light(n):

@@ -1,0 +1,81 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Poppins,86,&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,1,0,0,0,100,100,0,0,1,7,3,5,60,60,0,1
+Style: Badge,Poppins,44,&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,1,0,0,0,100,100,4,0,1,3,0,8,40,40,150,1
+Style: End,Poppins,120,&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,1,0,0,0,100,100,8,0,1,8,4,5,40,40,0,1
+Style: EndSub,Poppins,50,&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,1,0,0,0,100,100,0,0,1,4,2,5,60,60,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 1,0:00:00.25,0:00:01.08,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}WHAT IF YOU
+Dialogue: 1,0:00:01.08,0:00:02.25,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}WOKE UP TOMORROW...
+Dialogue: 1,0:00:02.25,0:00:03.30,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}AND EVERY OTHER
+Dialogue: 1,0:00:03.30,0:00:04.30,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}HUMAN ON EARTH
+Dialogue: 1,0:00:04.30,0:00:05.02,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}WAS GONE?
+Dialogue: 1,0:00:05.02,0:00:05.74,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}NOT DEAD.
+Dialogue: 1,0:00:05.74,0:00:06.24,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}JUST...
+Dialogue: 1,0:00:06.24,0:00:06.74,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}GONE.
+Dialogue: 1,0:00:07.58,0:00:08.33,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}KAI DID.
+Dialogue: 1,0:00:08.33,0:00:09.51,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}SIX TWELVE A.M.
+Dialogue: 1,0:00:09.51,0:00:10.45,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}NO TRAFFIC.
+Dialogue: 1,0:00:10.45,0:00:11.32,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}NO VOICES.
+Dialogue: 1,0:00:11.32,0:00:12.19,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}NO SIRENS.
+Dialogue: 1,0:00:12.19,0:00:13.12,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}JUST A CITY
+Dialogue: 1,0:00:13.12,0:00:14.31,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}OF TEN MILLION...
+Dialogue: 1,0:00:14.31,0:00:15.74,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}HOLDING ITS BREATH.
+Dialogue: 1,0:00:16.38,0:00:17.53,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}CARS SIT EXACTLY
+Dialogue: 1,0:00:17.53,0:00:18.85,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}WHERE THEY STOPPED,
+Dialogue: 1,0:00:18.85,0:00:20.17,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}ENGINES STILL WARM.
+Dialogue: 1,0:00:20.17,0:00:21.25,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}AND THE TRAFFIC
+Dialogue: 1,0:00:21.25,0:00:22.69,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}LIGHTS KEEP CHANGING...
+Dialogue: 1,0:00:22.69,0:00:23.55,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}FOR NO ONE.
+Dialogue: 1,0:00:24.18,0:00:25.08,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}HE WALKS DOWN
+Dialogue: 1,0:00:25.08,0:00:25.98,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}THE MIDDLE OF
+Dialogue: 1,0:00:25.98,0:00:26.67,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}THE ROAD,
+Dialogue: 1,0:00:26.67,0:00:27.84,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}SHOUTING UNTIL HIS
+Dialogue: 1,0:00:27.84,0:00:28.74,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}VOICE BREAKS.
+Dialogue: 1,0:00:28.74,0:00:29.58,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}HE CALLS HIS
+Dialogue: 1,0:00:29.58,0:00:30.01,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}MOM.
+Dialogue: 1,0:00:30.01,0:00:30.70,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}IT RINGS.
+Dialogue: 1,0:00:30.70,0:00:31.44,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}AND RINGS.
+Dialogue: 1,0:00:31.44,0:00:32.18,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}AND RINGS.
+Dialogue: 1,0:00:32.82,0:00:34.05,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}HERE'S THE SCARY
+Dialogue: 1,0:00:34.05,0:00:34.60,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}PART.
+Dialogue: 1,0:00:34.60,0:00:35.52,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}WITHOUT US,
+Dialogue: 1,0:00:35.52,0:00:36.75,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}POWER PLANTS RUN
+Dialogue: 1,0:00:36.75,0:00:37.80,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}ON AUTOPILOT.
+Dialogue: 1,0:00:37.80,0:00:38.72,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}BUT WITH NO
+Dialogue: 1,0:00:38.72,0:00:40.07,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}ONE WATCHING THEM...
+Dialogue: 1,0:00:40.07,0:00:40.93,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}ONLY FOR A
+Dialogue: 1,0:00:40.93,0:00:41.79,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}FEW HOURS.
+Dialogue: 1,0:00:42.35,0:00:43.10,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}BY SUNSET,
+Dialogue: 1,0:00:43.10,0:00:44.29,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}THE STATIONS START
+Dialogue: 1,0:00:44.29,0:00:44.93,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}FAILING.
+Dialogue: 1,0:00:44.93,0:00:45.69,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}AND ONE BY
+Dialogue: 1,0:00:45.69,0:00:46.12,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}ONE,
+Dialogue: 1,0:00:46.12,0:00:47.46,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}DISTRICT BY DISTRICT...
+Dialogue: 1,0:00:47.46,0:00:48.37,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}THE LIGHTS GO
+Dialogue: 1,0:00:48.37,0:00:48.80,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}OUT.
+Dialogue: 1,0:00:49.35,0:00:50.48,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}TOTAL DARKNESS.
+Dialogue: 1,0:00:50.48,0:00:51.31,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}NO GLOW ON
+Dialogue: 1,0:00:51.31,0:00:52.26,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}THE HORIZON.
+Dialogue: 1,0:00:52.26,0:00:53.27,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}JUST STARS HE
+Dialogue: 1,0:00:53.27,0:00:54.34,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}HAS NEVER SEEN
+Dialogue: 1,0:00:54.34,0:00:54.99,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}BEFORE.
+Dialogue: 1,0:00:54.99,0:00:56.12,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}THE FIRST NIGHT
+Dialogue: 1,0:00:56.12,0:00:57.01,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}OF THE REST
+Dialogue: 1,0:00:57.01,0:00:57.96,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}OF HIS LIFE.
+Dialogue: 1,0:00:58.72,0:00:59.40,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}AND THEN...
+Dialogue: 1,0:00:59.40,0:01:00.34,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}FAR ACROSS THE
+Dialogue: 1,0:01:00.34,0:01:00.81,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}CITY...
+Dialogue: 1,0:01:00.81,0:01:01.76,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}A SINGLE LIGHT
+Dialogue: 1,0:01:01.76,0:01:02.60,Cap,,0,0,0,,{\pos(540,1430)}{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}SWITCHED ON.
+Dialogue: 0,0:00:00.00,0:01:05.40,Badge,,0,0,0,,{\fad(400,400)}LAST HUMAN  ·  EP 1
+Dialogue: 2,0:01:03.00,0:01:05.40,End,,0,0,0,,{\pos(540,820)\fad(300,0)\c&H003B74E8&}LAST HUMAN
+Dialogue: 2,0:01:03.35,0:01:05.40,EndSub,,0,0,0,,{\pos(540,960)\fad(300,0)}EPISODE 2 — follow so you don't miss it

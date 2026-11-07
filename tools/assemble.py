@@ -52,7 +52,7 @@ WrapStyle: 0
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Cap,Poppins,86,&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,1,0,0,0,100,100,0,0,1,7,3,5,60,60,0,1
-Style: Badge,Poppins,40,&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,1,0,0,0,100,100,4,0,1,3,0,8,40,40,150,1
+Style: Badge,Poppins,44,&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,1,0,0,0,100,100,4,0,1,3,0,8,40,40,150,1
 Style: End,Poppins,120,&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,1,0,0,0,100,100,8,0,1,8,4,5,40,40,0,1
 Style: EndSub,Poppins,50,&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,1,0,0,0,100,100,0,0,1,4,2,5,60,60,0,1
 
@@ -68,7 +68,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             d = dur * w / tot
             txt = c.upper().replace("…", "...")
             pop = r"{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}"
-            rows.append(f"Dialogue: 1,{_ts(t)},{_ts(t + d)},Cap,,0,0,0,,{{\\pos({W // 2},1230)}}{pop}{txt}")
+            rows.append(f"Dialogue: 1,{_ts(t)},{_ts(t + d)},Cap,,0,0,0,,{{\\pos({W // 2},1430)}}{pop}{txt}")
             t += d
     if badge and total:
         rows.append(f"Dialogue: 0,{_ts(0)},{_ts(total)},Badge,,0,0,0,,{{\\fad(400,400)}}{badge}")
