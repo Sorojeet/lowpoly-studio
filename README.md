@@ -49,4 +49,4 @@ in about 50 minutes. On a machine with a GPU it is near real time.
 4. Preview / stills → fix → `render.mjs all` → `build.py`.
 
 Voices: `michael` (am_michael), `bella` (af_bella).
-The original Blender version of the library is preserved at git tag `blender-v1`.
+The original Blender version of the library is preserved in history at commit `64315ea` (`git checkout 64315ea`).
