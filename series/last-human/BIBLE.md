@@ -3,20 +3,20 @@
 **Logline:** One morning, every other person on Earth is simply gone. Each ~60 s episode
 follows Kai through what really happens to a world without us — and ends on a cliffhanger.
 
-**Format:** vertical 9:16, 1080×1920, 30 fps, 60–80 s. Low-poly 3D (Blender EEVEE).
+**Format:** vertical 9:16, 1080×1920, 30 fps, 60–80 s. Low-poly 3D (three.js).
 Narrator only: Kokoro **Michael** (`am_michael`, speed 0.93). Burnt-in pop captions.
 Every episode = a real "what if" fact (power, water, animals, cities decaying) + one mystery beat.
 
 ## Characters
 | Name | Look (asset) | Notes |
 |---|---|---|
-| **Kai** | `Survivor("Kai")` — orange hoodie `#e8743b`, jeans, teal delivery backpack | 20s, delivery rider, the last human… maybe |
+| **Kai** | `new Survivor("Kai")` — orange hoodie `#e8743b`, jeans, teal delivery backpack | 20s, delivery rider, the last human… maybe |
 | **The Light** | unknown | Someone switched on a light in the LIGHT_TOWER at the end of Ep 1 |
 
 ## The city (fixed, seed 7)
-- `City(seed=7, n=6)` — 13×13 blocks, 50 m pitch, roads at `City.road(k)`.
-- `HOME = (0,0,0)` Kai's 38-floor tower, door on the south face, teal awning.
-- `LIGHT_TOWER = (-1,-4,3)` 44 floors, ~180 m south-west of HOME. **Never change these** — continuity.
+- `new City({ seed: 7, n: 6 })` — 13×13 blocks, 50 m pitch, roads at `City.road(k)`.
+- `HOME = [0,0,0]` Kai's 38-floor tower, door on the south face, teal awning.
+- `LIGHT_TOWER = [-1,-4,3]` 44 floors, ~180 m south-west of HOME. **Never change these** — continuity.
 - Power plant north of the city at (60, 470).
 
 ## Episode arc

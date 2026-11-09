@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 *.part.mp4
 output/*_no-captions.mp4
+node_modules/

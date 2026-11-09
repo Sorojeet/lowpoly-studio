@@ -1,0 +1,13 @@
+{
+  "name": "lowpoly-studio",
+  "private": true,
+  "type": "module",
+  "description": "Procedural low-poly micro web-series pipeline (three.js)",
+  "scripts": {
+    "render": "node tools/render.mjs",
+    "preview": "node tools/serve.mjs"
+  },
+  "dependencies": {
+    "three": "0.170.0"
+  }
+}

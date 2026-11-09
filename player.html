@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shot Player</title>
+<style>
+  :root { --bg: #111; --fg: #eee; --accent: #e8743b; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); font: 14px system-ui, sans-serif; }
+  body.ui canvas { display: block; height: calc(100vh - 64px); width: auto; margin: 0 auto; }
+  #bar { display: none; gap: 12px; align-items: center; padding: 12px 16px; }
+  body.ui #bar { display: flex; }
+  #bar input[type=range] { flex: 1; accent-color: var(--accent); }
+  button { background: var(--accent); color: #111; border: 0; border-radius: 6px; padding: 6px 14px; font-weight: 600; cursor: pointer; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<div id="bar"><button id="play">Play</button><input id="scrub" type="range" min="1" value="1"><span id="lbl"></span></div>
+<script type="module">
+// Loads one shot of an episode. Headless renderer (tools/render.mjs) calls window.renderFrame(f).
+// Add &ui=1 for a scrub/play preview in a browser.
+import { stage } from '/studio/core.js';
+import * as S from '/studio/stage.js';
+const q = new URLSearchParams(location.search);
+const ep = q.get('ep') || 'last-human/ep01', shot = q.get('shot');
+const scale = (+q.get('res') || 100) / 100;
+try {
+  const mod = await import(`/series/${ep}/shots.js`);
+  mod.setTiming(await (await fetch(`/build/${ep}/audio/timing.json`)).json());
+  const n = mod.frames(shot);
+  S.init(scale);
+  mod.SHOTS[shot](n);
+  window.N = n;
+  window.renderFrame = (f, fmt = 'image/jpeg') => { S.update(f); S.render(); return stage.renderer.domElement.toDataURL(fmt, 0.92); };
+  if (q.get('ui')) {
+    document.body.classList.add('ui');
+    const sc = document.getElementById('scrub'), lbl = document.getElementById('lbl'), btn = document.getElementById('play');
+    sc.max = n;
+    const show = f => { S.update(f); S.render(); lbl.textContent = `${shot}  ${f}/${n}`; };
+    sc.oninput = () => show(+sc.value);
+    let playing = false, t0 = 0, f0 = 1;
+    btn.onclick = () => { playing = !playing; btn.textContent = playing ? 'Pause' : 'Play'; t0 = performance.now(); f0 = +sc.value; if (playing) tick(); };
+    const tick = () => { if (!playing) return; let f = f0 + Math.floor((performance.now() - t0) / 1000 * 30); if (f > n) { f0 = 1; t0 = performance.now(); f = 1; } sc.value = f; show(f); requestAnimationFrame(tick); };
+    show(1);
+  }
+  window.ready = true;
+} catch (e) { window.loadError = String(e.stack || e); console.error(e); }
+</script>
+</body>
+</html>
