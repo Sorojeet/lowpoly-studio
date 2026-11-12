@@ -36,14 +36,20 @@ module: `series/showcase/ps3-pack/shots.js` (`node tools/render.mjs showcase/ps3
 | `studio/look.js` | `Look.enable('ps3' \| 'ps3_night' \| 'ps3_dusty' \| 'ps3_cold', overrides)`, `Look.set(key, value, frame)`, `Look.fade()`; optional `dof`, `ao` |
 | `assets/characters/person.js` | `Person` (9 outfits: casual, hoodie, suit, worker, police, doctor, dress, soldier, farmer; 7 hair styles; hats, glasses, beard, backpack, height, build), `Person.random(name, seed)`, `crowd(n, area)` |
 | `assets/characters/rig.js` | motions shared by `Person` and `Survivor`: walk, run, idle, look, wave, point, cheer, talk, shout, phoneCall, sit, crouch, collapse |
-| `assets/vehicles.js` | `vehicle(kind)`: sedan, hatchback, suv, pickup, van, sportscar, taxi, police, ambulance, bus, truck (`rust` for wrecks, `lightsOn`); `drive()`, `beacon()`; `motorcycle`, `helicopter` + `spin()`, `airliner` |
+| `assets/vehicles.js` | `vehicle(kind)`: sedan, hatchback, suv, pickup, van, sportscar, taxi, police, ambulance, bus, truck (`rust` for wrecks, `lightsOn`); `drive()`, `beacon()`; `motorcycle`, `helicopter` + `spin()`, `airliner`, `boat` |
 | `assets/buildings.js` | `house`, `shop`, `apartment`, `office`, `warehouse`, `gasStation`, `ruin`, `streetRow`, `road`, `crossing`, `slab` (windows light up with `emit(b.windows, 2, frame)`) |
 | `assets/nature.js` | `terrain` (biomes: temperate, desert, snow, wasteland, autumn; `land.heightAt(x, y)`), `water` + `waves`, `tree` (oak, pine, palm, birch, dead, autumn, snowy), `forest`, `rock(s)`, `bush`, `grassField`, `flowers`, `mountains` |
 | `assets/street.js` | cone, barrier, hydrant, trashCan, dumpster, mailbox, busStop, billboard, sign, fence, crate, barrel, powerPole + wires, phoneBooth, vendingMachine, lampPost (real light), campfire + flicker, tent, debris |
 | `assets/interior.js` | `room`, sofa, table, chair, bed, tv, bookshelf, floorLamp, rug, plant, desk, fridge, counter |
+| `assets/space.js` | `planet` (earth, frozen, mars, moon, gas; city lights), `sun` + `vanish`, `orbitRing`, `pathLine`, `spinPlanet` |
+| `assets/weather.js` | `snow`, `rain` (looping particles, can follow the camera) |
 
 `mat()` gained `gloss`, `opacity`, `vertexColors`; `Buf` gained `loft`, `tube`, `rbox`, `out` (auto-facing), `tint`.
 Shots that do not call `Look.enable()` render exactly as before. Showcase video: `output/ps3-pack_showcase.mp4`.
+
+## Videos
+- `series/last-human/ep01` — Last Human, Episode 1 (original flat look)
+- `series/what-if/sun-vanished` — standalone "What if the Sun disappeared?" (PS3 look); a good template for new what-if videos
 
 ## Make an episode
 ```bash

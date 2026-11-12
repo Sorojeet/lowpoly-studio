@@ -1,0 +1,27 @@
+{
+  "series": "what-if",
+  "title": "What if the Sun disappeared?",
+  "voice": "am_michael",
+  "speed": 0.95,
+  "shots": [
+    { "id": "s01_park", "pad": 0.4,
+      "line": "What if the Sun just... disappeared? Right now. For the first eight minutes... you wouldn't notice a thing." },
+    { "id": "s02_dark", "pad": 0.5,
+      "line": "That's how long its last light takes to reach us. Then, like someone flipped a switch... the sky goes black." },
+    { "id": "s03_moon", "pad": 0.4,
+      "line": "The Moon goes dark too. It only ever shone with borrowed light. Now there are just stars. Everywhere." },
+    { "id": "s04_orbit", "pad": 0.4,
+      "line": "And with nothing left to hold it, Earth stops circling... and flies off into space, in a perfectly straight line." },
+    { "id": "s05_week", "pad": 0.4,
+      "line": "Within a week, the whole planet drops below freezing. Crops fail. And every plant on Earth stops making oxygen." },
+    { "id": "s06_year", "pad": 0.4,
+      "line": "After one year, it's minus seventy three degrees. The oceans freeze over, from the top down." },
+    { "id": "s07_bunker", "pad": 0.4,
+      "line": "But humans wouldn't vanish. Deep underground, warmed by the planet's own heat, a few of us could hold on... for thousands of years." },
+    { "id": "s08_drift", "pad": 0.3,
+      "line": "One tiny, warm light... drifting through the dark. Forever." },
+    { "id": "s09_sunrise", "pad": 2.4,
+      "line": "So the next time you see a sunrise... maybe say thanks." }
+  ],
+  "end_card": { "top": "WHAT IF?", "bottom": "Follow for the next one" }
+}

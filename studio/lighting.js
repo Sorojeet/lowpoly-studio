@@ -11,6 +11,8 @@ export const PRESETS = {
   dusk:      ['#ff7a4a', 2.6, 4, 250, '#ff9a6a', '#4a4f8f', 0.8],
   night:     ['#9fb6ff', 0.6, 35, 200, '#24305a', '#070a18', 0.5],
   blackout:  ['#8ea4f0', 0.9, 30, 160, '#1c2750', '#04060e', 0.55],
+  sunless:   ['#8ea4f0', 0.32, 42, 160, '#0b1026', '#020308', 0.45],   // no Sun at all: starlight only
+  space:     ['#fff4e0', 0.0, 0, 90, '#000000', '#000000', 0.0],          // black, no light: use space.sun({ light }) or your own lights
 };
 export const SUN_K = 1.0, HEMI_K = 2.4;
 

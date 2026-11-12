@@ -40,9 +40,10 @@ def chunks(line, max_words=3):
     return out
 
 
-def captions_ass(events, out, badge="", end_card=None, total=None, accent="&H003B74E8&"):
+def captions_ass(events, out, badge="", end_card=None, total=None, accent="&H003B74E8&", labels=None):
     """events: [(start_sec, voice_sec, line)] -> ASS with word-group pop captions.
-    accent is ASS BGR colour (default = Kai's orange)."""
+    accent is ASS BGR colour (default = Kai's orange).
+    labels: [(start_sec, end_sec, text)] big time-stamps under the badge, e.g. "+ 1 WEEK"."""
     head = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {W}
@@ -76,6 +77,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         s = total - end_card.get("secs", 2.6)
         rows.append(f"Dialogue: 2,{_ts(s)},{_ts(total)},End,,0,0,0,,{{\\pos({W // 2},820)\\fad(300,0)\\c{accent}}}{end_card['top']}")
         rows.append(f"Dialogue: 2,{_ts(s + 0.35)},{_ts(total)},EndSub,,0,0,0,,{{\\pos({W // 2},960)\\fad(300,0)}}{end_card['bottom']}")
+    for start, end, text in labels or []:
+        pop = r"{\fscx70\fscy70\t(0,120,\fscx108\fscy108)\t(120,200,\fscx100\fscy100)}"
+        rows.append(f"Dialogue: 1,{_ts(start)},{_ts(end)},End,,0,0,0,,{{\\pos({W // 2},330)\\fs84\\fad(0,250)\\c{accent}}}{pop}{text}")
     with open(out, "w") as f:
         f.write(head + "\n".join(rows) + "\n")
     return out

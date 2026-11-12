@@ -215,6 +215,26 @@ export function motorcycle(name = 'bike', loc = [0, 0, 0], heading = 0, { color 
   return root;
 }
 
+// ------------------------------------------------------------------ boat
+/** Small fishing boat, bow toward -Y, waterline at z = 0. boat.lamp = cabin light material. */
+export function boat(name = 'boat', loc = [0, 0, 0], heading = 0, { color = '#c94f4f', cabin = '#f2efe8', rust = 0 } = {}) {
+  const root = group(loc, null, name); root.rotation.z = heading * D;
+  const lamp = mat(`${name}_lamp`, '#2a3442', { emit: '#ffd48a', emission: 0, gloss: 0.8 });
+  const b = new Buf(), mats = [paint(color, rust), mat(`boat_${cabin}`, cabin), mat('veh_dark', '#22242a'), lamp, mat('boat_deck', '#9a7a55')];
+  const st = (y, w, zb, zt) => [[-w * 0.55, y, zb], [w * 0.55, y, zb], [w, y, zt], [-w, y, zt]];
+  b.out([0, 0, 0.3]).loft(0, [st(-5.2, 0.05, 0.2, 1.5), st(-3.6, 1.1, -0.5, 1.25), st(-1, 1.7, -0.7, 1.05), st(3.2, 1.6, -0.7, 1.05), st(4.6, 1.2, -0.4, 1.2)]);
+  b.out(null);
+  b.box(0, 0.2, 1.02, 3.0, 7.2, 0.06, 4);
+  b.box(0, 1.6, 1.08, 2.2, 2.6, 1.9, 1); b.box(0, 1.6, 2.98, 2.5, 3.0, 0.12, 0);
+  b.box(0, 0.28, 1.95, 1.8, 0.05, 0.75, 3);
+  for (const sx of [-1, 1]) b.box(sx * 1.11, 1.6, 1.95, 0.05, 1.6, 0.7, 3);
+  b.tube([0, -1.2, 1.05], [0, -1.2, 5.2], 0.07, 2, 6); b.tube([0, -1.2, 4.2], [0, -3.6, 2.2], 0.04, 2, 4);
+  b.tube([0, 1.6, 3.1], [0, 1.6, 4.1], 0.05, 2, 5);
+  for (const sx of [-1, 1]) b.box(sx * 1.55, -0.5, 1.08, 0.06, 6.5, 0.4, 0);
+  root.add(b.mesh(mats, `${name}_hull`));
+  return Object.assign(root, { lamp });
+}
+
 // ------------------------------------------------------------------ aircraft
 const circ = (y, rad, z = 0, n = 10, sq = 1) => Array.from({ length: n }, (_, i) => { const a = 2 * Math.PI * (i + 0.5) / n; return [rad * Math.cos(a), y, z + rad * sq * Math.sin(a)]; });
 const wing = (b, mi, rootY, tipY, span, chordR, chordT, z, zTip, sx) => {

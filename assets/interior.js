@@ -18,7 +18,7 @@ class K {
 }
 
 export function room(name = 'room', loc = [0, 0, 0], { w = 7, d = 6, h = 2.8, wall = '#d9cfc0', floor = '#9a7652', window = true, door = true, ceiling = false, light = true, lightColor = '#ffe2b8' } = {}) {
-  const k = new K(name), wl = k.c(wall), fl = k.c(floor), fl2 = k.c('#8a6a48'), trim = k.c('#f2efe8'), t = 0.2;
+  const k = new K(name), wl = k.c(wall), fl = k.c(floor), fl2 = k.c('#' + new THREE.Color(floor).multiplyScalar(0.8).getHexString()), trim = k.c('#f2efe8'), t = 0.2;
   for (let i = 0; i < Math.round(w / 0.5); i++) k.b.box(-w / 2 + (i + 0.5) * 0.5, 0, -0.1, 0.5, d, 0.1, i % 2 ? fl : fl2);   // floorboards
   // back wall (with window opening) and side walls
   if (window) {
