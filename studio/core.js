@@ -8,7 +8,7 @@ export { THREE };
 export const D = Math.PI / 180;
 
 // Shared mutable stage: current scene + animator (set by studio/stage.js reset()).
-export const stage = { scene: null, A: null, camera: null, renderer: null, light: null };
+export const stage = { scene: null, A: null, camera: null, renderer: null, light: null, look: null };
 
 // Emission scale: lets shots use intuitive "strength" numbers (1 = softly lit, 5 = blazing).
 export const EM = 0.4;
@@ -36,12 +36,22 @@ export class Rand {
 let MATS = new Map();
 export function resetMats() { MATS = new Map(); }
 
-/** Flat-shaded low-poly material. o.emission is a strength (scaled by EM); o.emit the glow colour. */
+/** Flat-shaded low-poly material. o.emission is a strength (scaled by EM); o.emit the glow colour.
+ *  PS3-look extras (all optional): o.gloss 0..1 = specular highlight (car paint, glass, water),
+ *  o.opacity < 1 = see-through, o.vertexColors = per-vertex tint (terrain). */
 export function mat(name, color, o = {}) {
   if (MATS.has(name)) return MATS.get(name);
-  const m = new THREE.MeshLambertMaterial({ color, flatShading: true, side: o.side ?? THREE.FrontSide });
+  const base = { color, flatShading: true, side: o.side ?? THREE.FrontSide };
+  let m;
+  if (o.gloss) {
+    m = new THREE.MeshPhongMaterial(base);
+    m.specular = new THREE.Color(o.specular ?? '#ffffff').multiplyScalar(0.25 + 0.75 * o.gloss);
+    m.shininess = o.shininess ?? 20 + 140 * o.gloss;
+  } else m = new THREE.MeshLambertMaterial(base);
   m.emissive = new THREE.Color(o.emit ?? color);
   m.emissiveIntensity = (o.emission ?? 0) * EM;
+  if (o.opacity !== undefined && o.opacity < 1) { m.transparent = true; m.opacity = o.opacity; m.depthWrite = false; }
+  if (o.vertexColors) m.vertexColors = true;
   if (o.fog === false) m.fog = false;
   if (o.toneMapped === false) m.toneMapped = false;
   m.name = name;
@@ -60,11 +70,58 @@ export function lin(c) { const k = new THREE.Color(c); return [k.r, k.g, k.b]; }
 // ------------------------------------------------------------------ mesh buffer
 /** Collects flat triangles per material index, builds one BufferGeometry with groups. */
 export class Buf {
-  constructor() { this.parts = new Map(); }
+  constructor() { this.parts = new Map(); this.center = null; this.color = null; this.cols = null; }
+  /** Auto-orient every following face away from point c (null = keep the winding as given). */
+  out(c) { this.center = c; return this; }
+  /** Vertex colour for following faces ([r,g,b] 0..1, linear); needs a material with vertexColors. */
+  tint(c) { this.color = c; if (c && !this.cols) this.cols = new Map(); return this; }
   tri(mi, a, b, c) {
     let p = this.parts.get(mi);
     if (!p) this.parts.set(mi, (p = []));
+    if (this.center) {
+      const o = this.center, ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2], vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+      const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+      const d = nx * ((a[0] + b[0] + c[0]) / 3 - o[0]) + ny * ((a[1] + b[1] + c[1]) / 3 - o[1]) + nz * ((a[2] + b[2] + c[2]) / 3 - o[2]);
+      if (d < 0) { const t = b; b = c; c = t; }
+    }
     p.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
+    if (this.cols) {
+      let q = this.cols.get(mi);
+      if (!q) this.cols.set(mi, (q = []));
+      while (q.length < p.length - 9) q.push(1);
+      const k = this.color || [1, 1, 1];
+      q.push(k[0], k[1], k[2], k[0], k[1], k[2], k[0], k[1], k[2]);
+    }
+  }
+  /** Rotated box: centre (cx,cy), base z0, yaw in radians. */
+  rbox(cx, cy, z0, sx, sy, sz, yaw, mi = 0, taper = 1) {
+    const c = Math.cos(yaw), s = Math.sin(yaw), hx = sx / 2, hy = sy / 2, v = [];
+    for (const [z, t] of [[z0, 1], [z0 + sz, taper]])
+      for (const [x, y] of [[-hx, -hy], [hx, -hy], [hx, hy], [-hx, hy]]) v.push([cx + (x * c - y * s) * t, cy + (x * s + y * c) * t, z]);
+    for (const q of [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]])
+      this.poly(mi, q.map(i => v[i]));
+  }
+  /** Skin a stack of rings (each an array of the same number of [x,y,z]); caps both ends. */
+  loft(mi, rings, { cap = true } = {}) {
+    const n = rings[0].length;
+    for (let r = 0; r < rings.length - 1; r++) for (let i = 0; i < n; i++) {
+      const k = (i + 1) % n;
+      this.tri(mi, rings[r][i], rings[r][k], rings[r + 1][k]); this.tri(mi, rings[r][i], rings[r + 1][k], rings[r + 1][i]);
+    }
+    if (cap) { this.poly(mi, rings[0].slice().reverse()); this.poly(mi, rings[rings.length - 1]); }
+  }
+  /** Cylinder between two points (n sides). */
+  tube(a, b, r, mi = 0, n = 6, rTop = null) {
+    rTop = rTop ?? r;
+    const d = new THREE.Vector3(b[0] - a[0], b[1] - a[1], b[2] - a[2]), len = d.length();
+    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), d.normalize());
+    const m4 = new THREE.Matrix4().compose(new THREE.Vector3(...a), q, new THREE.Vector3(1, 1, 1));
+    const t = new Buf(); t.cyl(0, 0, 0, r, len, 0, n, rTop);
+    const src = t.parts.get(0), v = new THREE.Vector3();
+    for (let i = 0; i < src.length; i += 9) {
+      const pts = [0, 3, 6].map(o => { v.set(src[i + o], src[i + o + 1], src[i + o + 2]).applyMatrix4(m4); return [v.x, v.y, v.z]; });
+      this.tri(mi, pts[0], pts[1], pts[2]);
+    }
   }
   poly(mi, pts) { for (let i = 1; i < pts.length - 1; i++) this.tri(mi, pts[0], pts[i], pts[i + 1]); }
   box(cx, cy, z0, sx, sy, sz, mi = 0, taper = 1) {
@@ -101,6 +158,11 @@ export class Buf {
     let off = 0;
     for (const k of keys) { const p = this.parts.get(k); arr.set(p, off); g.addGroup(off / 3, p.length / 3, k); off += p.length; }
     g.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+    if (this.cols) {
+      const col = new Float32Array(total).fill(1); off = 0;
+      for (const k of keys) { const q = this.cols.get(k); if (q) col.set(q.slice(0, this.parts.get(k).length), off); off += this.parts.get(k).length; }
+      g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    }
     g.computeVertexNormals();
     return g;
   }
@@ -175,6 +237,14 @@ export function join(objs, name = '') {
       let mi = mats.indexOf(m);
       if (mi < 0) { mi = mats.length; mats.push(m); }
       const parts = b.parts.get(mi) || (b.parts.set(mi, []), b.parts.get(mi));
+      const col = g.attributes.color;
+      if (col) {
+        if (!b.cols) b.cols = new Map();
+        let q = b.cols.get(mi);
+        if (!q) b.cols.set(mi, (q = []));
+        while (q.length < parts.length) q.push(1);
+        for (let i = gr.start; i < gr.start + gr.count; i++) q.push(col.getX(i), col.getY(i), col.getZ(i));
+      }
       for (let i = gr.start; i < gr.start + gr.count; i++) {
         v.fromBufferAttribute(p, i).applyMatrix4(o.matrixWorld);
         parts.push(v.x, v.y, v.z);

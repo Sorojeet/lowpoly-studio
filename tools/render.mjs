@@ -27,8 +27,8 @@ const [ep, which] = args;
 const res = +opt('--res', 100), still = opt('--still', null), force = args.includes('--force');
 const EP = path.join(ROOT, 'build', ep);
 
-function encode(dir, out) {
-  const vf = `scale=${W}:${H}:flags=lanczos,${GLOW},format=yuv420p`;
+function encode(dir, out, glow = true) {
+  const vf = `scale=${W}:${H}:flags=lanczos,${glow ? GLOW + ',' : ''}format=yuv420p`;
   const part = out.replace(/\.mp4$/, '.part.mp4');
   const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-start_number', '1', '-i', path.join(dir, 'f_%04d.jpg'),
     '-filter_complex', vf, '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), part], { stdio: 'inherit' });
@@ -43,7 +43,7 @@ async function renderShot(browser, port, shot) {
   await page.waitForFunction('window.ready || window.loadError', null, { timeout: 300000 });
   const err = await page.evaluate('window.loadError');
   if (err) throw new Error(err);
-  const n = await page.evaluate('window.N');
+  const n = await page.evaluate('window.N'), post = await page.evaluate('window.POST');
   const grab = async (f, file) => {
     const data = await page.evaluate(f => window.renderFrame(f), f);
     const tmp = file + '.tmp';
@@ -66,7 +66,7 @@ async function renderShot(browser, port, shot) {
       if (done % 50 === 0) console.log(`  ${shot} ${f}/${n}  ${((Date.now() - t0) / done / 1000).toFixed(2)} s/frame`);
     }
     fs.mkdirSync(path.join(EP, 'shots'), { recursive: true });
-    encode(dir, path.join(EP, 'shots', `${shot}.mp4`));
+    encode(dir, path.join(EP, 'shots', `${shot}.mp4`), !post);
     console.log(`done ${shot} ${n} frames ${Math.round((Date.now() - t0) / 1000)}s`);
   }
   await page.close();

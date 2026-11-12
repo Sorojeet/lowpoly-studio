@@ -2,6 +2,7 @@
 import { THREE, stage, resetMats, D } from './core.js';
 import { Animator } from './anim.js';
 import * as Lt from './lighting.js';
+import * as Look from './look.js';
 
 export const W = 1080, H = 1920, FPS = 30;
 
@@ -19,6 +20,8 @@ export function init(scale = 1) {
 }
 
 export function reset() {
+  Look.dispose();
+  if (stage.renderer) stage.renderer.toneMappingExposure = 1.15;
   stage.scene = new THREE.Scene();
   stage.A = new Animator();
   stage.camera = null;
@@ -46,4 +49,4 @@ export function camera(loc, target, lens = 35) {
 export function move(ob, keys, interp = 'BEZIER') { for (const [f, p] of keys) stage.A.key(ob, 'position', f, p, interp); }
 
 export function update(f) { stage.A.update(f); }
-export function render() { stage.renderer.render(stage.scene, stage.camera); }
+export function render() { if (stage.look) Look.render(); else stage.renderer.render(stage.scene, stage.camera); }

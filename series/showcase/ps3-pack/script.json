@@ -1,0 +1,24 @@
+{
+  "series": "showcase",
+  "title": "PS3 pack showcase",
+  "shots": [
+    {
+      "id": "s01_people"
+    },
+    {
+      "id": "s02_vehicles"
+    },
+    {
+      "id": "s03_street"
+    },
+    {
+      "id": "s04_nature"
+    },
+    {
+      "id": "s05_interior"
+    },
+    {
+      "id": "s06_wasteland"
+    }
+  ]
+}

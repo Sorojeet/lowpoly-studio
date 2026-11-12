@@ -29,11 +29,13 @@ const ep = q.get('ep') || 'last-human/ep01', shot = q.get('shot');
 const scale = (+q.get('res') || 100) / 100;
 try {
   const mod = await import(`/series/${ep}/shots.js`);
-  mod.setTiming(await (await fetch(`/build/${ep}/audio/timing.json`)).json());
+  const tm = await fetch(`/build/${ep}/audio/timing.json`);   // narration timing; silent showcases have none
+  if (tm.ok) mod.setTiming(await tm.json());
   const n = mod.frames(shot);
   S.init(scale);
   mod.SHOTS[shot](n);
   window.N = n;
+  window.POST = !!stage.look;   // look has its own bloom -> renderer skips the ffmpeg glow
   window.renderFrame = (f, fmt = 'image/jpeg') => { S.update(f); S.render(); return stage.renderer.domElement.toDataURL(fmt, 0.92); };
   if (q.get('ui')) {
     document.body.classList.add('ui');

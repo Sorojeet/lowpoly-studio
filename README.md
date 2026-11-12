@@ -8,7 +8,7 @@ the city, props and sounds regenerate identically and can be reused in any episo
 studio/        core.js (meshes, materials, join, seeded rng), anim.js (keyframes),
                lighting.js (time-of-day presets, sky dome, sun shadows), stage.js (renderer, camera)
 assets/
-  characters/survivor.js   Kai: joint rig + walk / look / phoneCall / shout / sit / poseStand
+  characters/survivor.js   Kai (motions come from characters/rig.js)
   city.js                  procedural city, window "rings" for blackout control, fixed landmarks
   props.js                 cars, traffic lights, street lamps, trees, birds/flocks, benches
   power.js                 power plant, cooling towers, pylons, power lines, smoke
@@ -25,6 +25,25 @@ tools/
   fetch_models.sh  Kokoro voice models (~350 MB, not in git)
 series/<name>/  BIBLE.md + one folder per episode: script.json, shots.js, build.py
 ```
+
+## PS3 pack (general-purpose asset library)
+Same flat-shaded style, upgraded with a PS3-era look: HDR bloom, colour grade, vignette, fill + rim light,
+glossy paint / glass / water. Works for any video, not just one series. Full usage example for every
+module: `series/showcase/ps3-pack/shots.js` (`node tools/render.mjs showcase/ps3-pack all`).
+
+| Module | What is in it |
+|---|---|
+| `studio/look.js` | `Look.enable('ps3' \| 'ps3_night' \| 'ps3_dusty' \| 'ps3_cold', overrides)`, `Look.set(key, value, frame)`, `Look.fade()`; optional `dof`, `ao` |
+| `assets/characters/person.js` | `Person` (9 outfits: casual, hoodie, suit, worker, police, doctor, dress, soldier, farmer; 7 hair styles; hats, glasses, beard, backpack, height, build), `Person.random(name, seed)`, `crowd(n, area)` |
+| `assets/characters/rig.js` | motions shared by `Person` and `Survivor`: walk, run, idle, look, wave, point, cheer, talk, shout, phoneCall, sit, crouch, collapse |
+| `assets/vehicles.js` | `vehicle(kind)`: sedan, hatchback, suv, pickup, van, sportscar, taxi, police, ambulance, bus, truck (`rust` for wrecks, `lightsOn`); `drive()`, `beacon()`; `motorcycle`, `helicopter` + `spin()`, `airliner` |
+| `assets/buildings.js` | `house`, `shop`, `apartment`, `office`, `warehouse`, `gasStation`, `ruin`, `streetRow`, `road`, `crossing`, `slab` (windows light up with `emit(b.windows, 2, frame)`) |
+| `assets/nature.js` | `terrain` (biomes: temperate, desert, snow, wasteland, autumn; `land.heightAt(x, y)`), `water` + `waves`, `tree` (oak, pine, palm, birch, dead, autumn, snowy), `forest`, `rock(s)`, `bush`, `grassField`, `flowers`, `mountains` |
+| `assets/street.js` | cone, barrier, hydrant, trashCan, dumpster, mailbox, busStop, billboard, sign, fence, crate, barrel, powerPole + wires, phoneBooth, vendingMachine, lampPost (real light), campfire + flicker, tent, debris |
+| `assets/interior.js` | `room`, sofa, table, chair, bed, tv, bookshelf, floorLamp, rug, plant, desk, fridge, counter |
+
+`mat()` gained `gloss`, `opacity`, `vertexColors`; `Buf` gained `loft`, `tube`, `rbox`, `out` (auto-facing), `tint`.
+Shots that do not call `Look.enable()` render exactly as before. Showcase video: `output/ps3-pack_showcase.mp4`.
 
 ## Make an episode
 ```bash
