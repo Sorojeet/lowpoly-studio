@@ -32,10 +32,5 @@ def text(y, s, size, fill, stroke=10):
     ImageDraw.Draw(img).text(((W - w) / 2, y), s, font=f, fill=fill, stroke_width=stroke, stroke_fill=(0, 0, 0))
 text(120, 'WHAT IF THE', 112, (255, 255, 255))
 text(250, 'SUN', 250, (255, 196, 48), 14)
-text(H - 470, 'DISAPPEARED?', 132, (255, 255, 255))
-# timer pill
-f = ImageFont.truetype(F, 64); s = '8 MIN 20 SEC'; w = dr.textlength(s, font=f)
-x0, y0 = (W - w) / 2 - 40, H - 290
-ImageDraw.Draw(img).rounded_rectangle([x0, y0, x0 + w + 80, y0 + 110], radius=55, fill=(214, 40, 40))
-ImageDraw.Draw(img).text((x0 + 40, y0 + 12), s, font=f, fill=(255, 255, 255))
+text(H - 360, 'DISAPPEARED?', 132, (255, 255, 255))
 img.convert('RGB').save(sys.argv[1], quality=94)
