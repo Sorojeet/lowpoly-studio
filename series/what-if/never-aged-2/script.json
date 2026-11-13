@@ -54,15 +54,13 @@
   {
    "id": "s02",
    "voice": "bm_george",
-   "speed": 0.85,
-   "fx": "whisper",
-   "mix": 0.5,
+   "speed": 0.88,
    "text": "No... They can't actually do this."
   },
   {
    "id": "n07",
-   "speed": 0.92,
-   "text": "But the most terrifying discovery wasn't that the government had a plan..."
+   "speed": 0.95,
+   "text": "But the most terrifying discovery... wasn't that the government had a plan."
   }
  ],
  "title": "What If Humans Never Aged Again? Part 2: The Price of Immortality",
@@ -235,7 +233,7 @@
    "cues": [
     [
      "n07",
-     0.3
+     0.15
     ]
    ]
   },
