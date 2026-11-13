@@ -186,28 +186,42 @@ function sh04_screens(n) {
 }
 
 // ============================================================== SCENE 3 — A WORLD WITHOUT TOMORROW
+/** Someone lying on their back (head toward +Y), on a surface at height z. */
+function lie(p, x, y, z) {
+  p.poseStand(1);
+  p.j.root.rotation.set(-90 * D, 0, 0); p.j.root.position.set(x, y, z + 0.13);
+  for (const [s, sx] of [['L', 1], ['R', -1]]) { p.rot(`shoulder${s}`, 1, 0, 0, -10 * sx); p.rot(`elbow${s}`, 1, -20); }
+  p.rot('head', 1, 0, 0, 15);
+}
+
 function sh05_apartment(n) {
-  indoors('ps3_dusty', { exposure: 1.0, bloom: 0.4, vignette: 0.6, saturation: 0.85 }, 0.12);
-  In.hall('flat', [0, 0, 0], { w: 4.8, d: 3.8, h: 2.5, wall: '#a89a84', floor: '#6f5f4c', floor2: '#665746', tile: 0.4, closed: true, lights: [0, 0], trim: '#8a7c66' });
-  const bulb = new THREE.PointLight('#ffcf8a', 9, 9, 1.5); bulb.position.set(0.2, 0.2, 2.2); stage.scene.add(bulb);
-  const bb = new Buf(); bb.cyl(0.2, 0.2, 2.25, 0.05, 0.1, 0, 6); bb.tube([0.2, 0.2, 2.35], [0.2, 0.2, 2.5], 0.006, 1, 3);
+  indoors('ps3_dusty', { exposure: 1.0, bloom: 0.4, vignette: 0.6, saturation: 0.85 }, 0.14);
+  In.hall('flat', [0, 0, 0], { w: 6.2, d: 4.8, h: 3.2, wall: '#a89a84', floor: '#6f5f4c', floor2: '#665746', tile: 0.4, closed: true, lights: [0, 0], trim: '#8a7c66' });
+  const bulb = new THREE.PointLight('#ffcf8a', 12, 11, 1.5); bulb.position.set(0, 0.2, 2.85); stage.scene.add(bulb);
+  const bb = new Buf(); bb.cyl(0, 0.2, 2.9, 0.05, 0.1, 0, 6); bb.tube([0, 0.2, 3.0], [0, 0.2, 3.2], 0.006, 1, 3);
   stage.scene.add(bb.mesh([mat('bulb', '#fff2d0', { emission: 8 }), mat('cord', '#222')]));
-  Scr.screen('win', [1.4, 1.84, 1.55], 0, { w: 1.0, h: 1.0, px: 128, draw: (c, W, H) => { c.fillStyle = '#18233a'; c.fillRect(0, 0, W, H); c.fillStyle = '#ffd58a'; for (let i = 0; i < 30; i++) c.fillRect((i * 37) % W, (i * 53) % H, 6, 8); }, glow: 0.8, depth: 0.05, bezel: 0.05, frame: '#5a4a3a' });
-  Lab.bunkBed('bA', [-1.85, 0.6, 0], 0); Lab.bunkBed('bB', [-0.75, 0.6, 0], 0, { blanket: ['#c96a5a', '#5a7f9a'] }); Lab.bunkBed('bC', [1.9, 0.9, 0], 90, { blanket: ['#8cbf5f', '#e0b23c'] });
-  const mt = new Buf(); for (const [x, y, c] of [[0.5, -1.2, 0], [-0.4, -1.3, 1]]) { mt.box(x, y, 0, 0.85, 1.8, 0.12, 2); mt.box(x, y - 0.3, 0.12, 0.8, 1.0, 0.03, c); }
+  Scr.screen('win', [0.9, 2.34, 1.7], 0, { w: 1.1, h: 1.1, px: 128, draw: (c, W, H) => { c.fillStyle = '#18233a'; c.fillRect(0, 0, W, H); c.fillStyle = '#ffd58a'; for (let i = 0; i < 30; i++) c.fillRect((i * 37) % W, (i * 53) % H, 6, 8); }, glow: 0.8, depth: 0.05, bezel: 0.05, frame: '#5a4a3a' });
+  const S12 = 1.12, LOWER = 0.58, UPPER = 1.59;                      // bunks scaled up to adult size
+  const bunk = (nm, loc, hd, bl) => { const o = Lab.bunkBed(nm, loc, hd, bl ? { blanket: bl } : {}); o.scale.setScalar(S12); return o; };
+  bunk('bA', [-2.45, 1.15, 0], 0); bunk('bB', [-0.85, 1.15, 0], 0, ['#c96a5a', '#5a7f9a']); bunk('bC', [1.95, 1.75, 0], 90, ['#8cbf5f', '#e0b23c']);
+  const mt = new Buf(); for (const [x, y, c] of [[1.1, -1.35, 0], [-0.2, -1.6, 1]]) { mt.box(x, y, 0, 0.85, 1.8, 0.12, 2); mt.box(x, y - 0.3, 0.12, 0.8, 1.0, 0.03, c); }
   stage.scene.add(mt.mesh([mat('mt1', '#7a5fb0'), mat('mt2', '#4f9d8f'), mat('mat', '#e4dfd3')]));
-  const cl = new Buf(); cl.tube([-2.3, -1.6, 2.1], [2.3, 1.7, 2.1], 0.006, 0, 3);
+  const cl = new Buf(); cl.tube([-3.1, -2.1, 2.55], [3.1, 2.2, 2.55], 0.006, 0, 3);
   const r = new Rand(3);
-  for (let i = 0; i < 9; i++) { const t = 0.08 + i * 0.1, x = -2.3 + 4.6 * t, y = -1.6 + 3.3 * t; cl.rbox(x, y, 1.7, r.uniform(0.25, 0.45), 0.02, r.uniform(0.3, 0.45), 0.62, 1 + (i % 4)); }
+  for (let i = 0; i < 9; i++) { const t = 0.08 + i * 0.1, x = -3.1 + 6.2 * t, y = -2.1 + 4.3 * t; cl.rbox(x, y, 2.12, r.uniform(0.25, 0.45), 0.02, r.uniform(0.3, 0.45), 0.6, 1 + (i % 4)); }
   stage.scene.add(cl.mesh([mat('line', '#ddd'), mat('c1', '#c94f4f'), mat('c2', '#3f7fbf'), mat('c3', '#f2c14e'), mat('c4', '#e8e4da')]));
-  const sitters = [[-1.85, 0.3, 0.47, 0, 41], [-1.85, 0.9, 1.37, 0, 42], [-0.75, 0.2, 0.47, 0, 43], [1.9, 1.35, 0.47, 90, 44], [1.85, 0.45, 1.37, 90, 45]];
-  sitters.forEach(([x, y, h, fc, sd], i) => { const p = Person.random(`s${i}`, sd, { loc: [x + (fc ? -0.15 : 0), y - (fc ? 0 : 0.35), h - 0.47], facing: fc ? -90 + 180 : 0 }); p.poseStand(1); p.sit(1, 0.47); p.rot('head', 1, 12 + i * 3, 0, (i - 2) * 10); p.idle(1, n, { arms: false, amount: 0.4, seed: i }); });
-  const kid = Person.random('kid', 51, { loc: [0.45, -0.7, 0.12], facing: 20, height: 0.55 }); kid.poseStand(1); kid.sit(1, 0.0);
-  const st = Person.random('stand', 52, { loc: [0.95, 0.1, 0], facing: 120 }); st.poseStand(1); st.idle(1, n); st.rot('head', 1, 10, 0, 0);
-  const st2 = Person.random('stand2', 53, { loc: [-0.1, -0.3, 0], facing: -30, outfit: 'dress' }); st2.poseStand(1); st2.idle(1, n, { seed: 3 }); st2.carry(1);
-  const { cam, tgt, lens } = S.camera([1.6, -1.75, 1.75], [-0.8, 0.6, 1.0], 17);
-  S.move(cam, [[1, [1.75, -1.75, 1.8]], [n, [0.95, -1.75, 1.7]]], 'LINEAR');
-  S.move(tgt, [[1, [-0.6, 0.6, 1.0]], [n, [-1.2, 0.6, 1.05]]], 'LINEAR');
+  // sitting on the edges of the lower bunks, feet on the floor
+  [[-2.45 + 0.3, 1.0, 90, 41], [-0.85 + 0.3, 0.7, 90, 43], [-0.85 + 0.3, 1.55, 90, 47], [1.95, 1.75 - 0.3, 0, 44]].forEach(([x, y, fc, sd], i) => {
+    const p = Person.random(`s${i}`, sd, { loc: [x, y, 0], facing: fc }); p.poseStand(1); p.sit(1, LOWER); p.rot('head', 1, 14 + i * 3, 0, (i - 1.5) * 12); p.idle(1, n, { arms: false, amount: 0.4, seed: i });
+  });
+  // lying on the upper bunks and the floor mattresses
+  lie(Person.random('u1', 42), -2.45, 0.45, UPPER); lie(Person.random('u2', 45), -0.85, 0.45, UPPER); lie(Person.random('f1', 48), 1.1, -2.2, 0.12);
+  const kid = Person.random('kid', 51, { loc: [-0.2, -1.4, 0], facing: 30, height: 0.55 }); kid.poseStand(1); kid.sit(1, 0.12 / 0.55);
+  const st = Person.random('stand', 52, { loc: [0.5, 0.3, 0], facing: 140 }); st.poseStand(1); st.idle(1, n); st.rot('head', 1, 10, 0, 0);
+  const st2 = Person.random('stand2', 53, { loc: [1.9, -0.2, 0], facing: 60, outfit: 'dress' }); st2.poseStand(1); st2.idle(1, n, { seed: 3 }); st2.carry(1);
+  const { cam, tgt, lens } = S.camera([2.7, -2.2, 1.8], [-1.0, 1.0, 1.0], 17);
+  S.move(cam, [[1, [2.8, -2.15, 1.85]], [n, [2.2, -2.25, 1.75]]], 'LINEAR');
+  S.move(tgt, [[1, [-0.8, 1.0, 1.0]], [n, [-1.4, 1.0, 1.05]]], 'LINEAR');
 }
 
 function sh06_shelves(n) {
