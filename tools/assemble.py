@@ -74,14 +74,17 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         rows.append(f"Dialogue: 0,{_ts(0)},{_ts(total)},Badge,,0,0,0,,{{\\fad(400,400)}}{badge}")
     if end_card and total:
         s = total - end_card.get("secs", 2.6)
-        rows.append(f"Dialogue: 2,{_ts(s)},{_ts(total)},End,,0,0,0,,{{\\pos({W // 2},820)\\fad(300,0)\\c{accent}}}{end_card['top']}")
-        rows.append(f"Dialogue: 2,{_ts(s + 0.35)},{_ts(total)},EndSub,,0,0,0,,{{\\pos({W // 2},960)\\fad(300,0)}}{end_card['bottom']}")
+        size = f"\\fs{end_card['size']}" if end_card.get("size") else ""          # optional: {"size": 84} for long titles
+        y = end_card.get("y", 820)
+        rows.append(f"Dialogue: 2,{_ts(s)},{_ts(total)},End,,0,0,0,,{{\\pos({W // 2},{y})\\fad(300,0)\\c{accent}{size}}}{end_card['top']}")
+        if end_card.get("bottom"):
+            rows.append(f"Dialogue: 2,{_ts(s + 0.35)},{_ts(total)},EndSub,,0,0,0,,{{\\pos({W // 2},{y + 140})\\fad(300,0)}}{end_card['bottom']}")
     with open(out, "w") as f:
         f.write(head + "\n".join(rows) + "\n")
     return out
 
 
-def finish(video, audio_wav, out, ass=None, fade_in=0.4, fade_out=0.0, total=None):
+def finish(video, audio_wav, out, ass=None, fade_in=0.4, fade_out=0.0, total=None, crf=18, maxrate=None):
     vf = []
     if ass:
         vf.append(f"ass={ass}:fontsdir={FONTS}")
@@ -92,7 +95,9 @@ def finish(video, audio_wav, out, ass=None, fade_in=0.4, fade_out=0.0, total=Non
     part = out[:-4] + ".part.mp4"
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", video, "-i", audio_wav, "-map", "0:v", "-map", "1:a"]
     if vf:
-        cmd += ["-vf", ",".join(vf), "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p"]
+        cmd += ["-vf", ",".join(vf), "-c:v", "libx264", "-preset", "veryfast", "-crf", str(crf), "-pix_fmt", "yuv420p"]
+        if maxrate:                                   # e.g. "9M" keeps phone-friendly file sizes
+            cmd += ["-maxrate", maxrate, "-bufsize", "18M"]
     else:
         cmd += ["-c:v", "copy"]
     cmd += ["-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", part]

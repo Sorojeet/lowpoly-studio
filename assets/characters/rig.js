@@ -99,13 +99,13 @@ export class Rig {
 
   // ------------------------------------------------------------ extra motions (PS3 pack)
   /** Subtle breathing + weight shift so a standing character never looks frozen. */
-  idle(start, end, { amount = 1, seed = 0 } = {}) {
+  idle(start, end, { amount = 1, seed = 0, arms = true } = {}) {
     const ph = seed * 1.7;
     for (let f = start; f <= end; f += 6) {
       const t = f / 30 * 2 * Math.PI;
       this.rot('spine', f, 1.2 * amount * Math.sin(t / 3.2 + ph), 0, 1.5 * amount * Math.sin(t / 5.5 + ph), 'LINEAR');
       stage.A.key(this.j.hips, 'position', f, [0.012 * amount * Math.sin(t / 5.5 + ph), 0, this.H + 0.006 * amount * Math.sin(t / 3.2 + ph)], 'LINEAR');
-      for (const [s, sx] of [['L', 1], ['R', -1]]) this.rot(`shoulder${s}`, f, 2 * amount * Math.sin(t / 3.2 + ph + sx), 0, -6 * sx - 1.5 * amount * Math.sin(t / 3.2 + ph), 'LINEAR');
+      if (arms) for (const [s, sx] of [['L', 1], ['R', -1]]) this.rot(`shoulder${s}`, f, 2 * amount * Math.sin(t / 3.2 + ph + sx), 0, -6 * sx - 1.5 * amount * Math.sin(t / 3.2 + ph), 'LINEAR');
     }
   }
 
@@ -220,5 +220,57 @@ export class Rig {
     stage.A.key(r, 'position', frame, undefined, 'BEZIER');
     const p = r.position;
     stage.A.key(r, 'position', frame + dur, [p.x, p.y, p.z + 0.14]);
+  }
+
+  // ------------------------------------------------------------ more motions (What If pack)
+  /** Raise a hand to the cheek and hold it there (looking in a mirror, disbelief). */
+  touchFace(frame, { side = 'R', dur = 20 } = {}) {
+    const sx = side === 'L' ? 1 : -1;
+    this.hold(`shoulder${side}`, frame); this.hold(`elbow${side}`, frame);
+    this.rot(`shoulder${side}`, frame + dur, -54, 0, -14 * sx);
+    this.rot(`elbow${side}`, frame + dur, -128, 0, -26 * sx);
+  }
+  /** Lower an arm back to the side. */
+  armDown(frame, { side = 'R', dur = 14 } = {}) {
+    const sx = side === 'L' ? 1 : -1;
+    this.hold(`shoulder${side}`, frame); this.hold(`elbow${side}`, frame);
+    this.rot(`shoulder${side}`, frame + dur, 0, 0, -6 * sx); this.rot(`elbow${side}`, frame + dur, -10);
+  }
+  /** Palms-up "no idea" shrug, held for `hold` frames. */
+  shrug(frame, { dur = 8, hold = 14 } = {}) {
+    for (const [s, sx] of [['L', 1], ['R', -1]]) {
+      this.hold(`shoulder${s}`, frame); this.hold(`elbow${s}`, frame);
+      for (const f of [frame + dur, frame + dur + hold]) { this.rot(`shoulder${s}`, f, -12, -20 * sx, 0); this.rot(`elbow${s}`, f, -100, 0, 28 * sx); }
+      this.rot(`shoulder${s}`, frame + dur * 2 + hold, 0, 0, -6 * sx); this.rot(`elbow${s}`, frame + dur * 2 + hold, -10);
+    }
+    this.hold('head', frame); this.rot('head', frame + dur, 0, 0, 0, 'BEZIER'); this.rot('head', frame + dur + 4, 4, 8, 0);
+  }
+  /** Scratch the back of the head. */
+  scratchHead(frame, { side = 'R', n = 4, dur = 10 } = {}) {
+    const sx = side === 'L' ? 1 : -1;
+    this.hold(`shoulder${side}`, frame); this.hold(`elbow${side}`, frame);
+    this.rot(`shoulder${side}`, frame + dur, -150, 0, -20 * sx);
+    for (let k = 0; k <= n * 2; k++) this.rot(`elbow${side}`, frame + dur + k * 4, k % 2 ? -118 : -134);
+  }
+  /** Shove / grab with both arms, leaning in (crowd pushing, tug-of-war). */
+  shove(start, end, { period = 9, lean = 14, seed = 0 } = {}) {
+    for (const [s, sx] of [['L', 1], ['R', -1]]) { this.hold(`shoulder${s}`, start); this.hold(`elbow${s}`, start); }
+    this.hold('spine', start);
+    for (let f = start + 6, k = seed; f <= end; f += period, k++) {
+      const out = k % 2 === 0;
+      for (const [s, sx] of [['L', 1], ['R', -1]]) { this.rot(`shoulder${s}`, f, out ? -82 : -62, 0, 8 * sx); this.rot(`elbow${s}`, f, out ? -18 : -70); }
+      this.rot('spine', f, out ? -lean : -lean * 0.4, 0, out ? 5 : -5);
+      this.rot('head', f, out ? 6 : 0);
+    }
+  }
+  /** Reach up/forward with one arm (to a shelf) and hold. */
+  reach(frame, { side = 'R', pitch = 120, dur = 12 } = {}) {
+    const sx = side === 'L' ? 1 : -1;
+    this.hold(`shoulder${side}`, frame); this.hold(`elbow${side}`, frame);
+    this.rot(`shoulder${side}`, frame + dur, -pitch, 0, 6 * sx); this.rot(`elbow${side}`, frame + dur, -12);
+  }
+  /** Hold something in both hands in front of the chest (a box, a clipboard). */
+  carry(f) {
+    for (const [s, sx] of [['L', 1], ['R', -1]]) { this.rot(`shoulder${s}`, f, -32, 0, -10 * sx); this.rot(`elbow${s}`, f, -78, 0, -18 * sx); }
   }
 }

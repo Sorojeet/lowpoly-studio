@@ -34,13 +34,23 @@ module: `series/showcase/ps3-pack/shots.js` (`node tools/render.mjs showcase/ps3
 | Module | What is in it |
 |---|---|
 | `studio/look.js` | `Look.enable('ps3' \| 'ps3_night' \| 'ps3_dusty' \| 'ps3_cold', overrides)`, `Look.set(key, value, frame)`, `Look.fade()`; optional `dof`, `ao` |
-| `assets/characters/person.js` | `Person` (9 outfits: casual, hoodie, suit, worker, police, doctor, dress, soldier, farmer; 7 hair styles; hats, glasses, beard, backpack, height, build), `Person.random(name, seed)`, `crowd(n, area)` |
-| `assets/characters/rig.js` | motions shared by `Person` and `Survivor`: walk, run, idle, look, wave, point, cheer, talk, shout, phoneCall, sit, crouch, collapse |
+| `assets/characters/person.js` | `Person` (9 outfits: casual, hoodie, suit, worker, police, doctor, dress, soldier, farmer; 9 hair styles (incl. `neat`, `balding`); hats, glasses, beard, backpack, height, build), `Person.random(name, seed)`, `crowd(n, area)` |
+| `assets/characters/rig.js` | motions shared by `Person` and `Survivor`: walk, run, idle, look, wave, point, cheer, talk, shout, phoneCall, sit, crouch, collapse, touchFace, armDown, shrug, scratchHead, shove, reach, carry |
 | `assets/vehicles.js` | `vehicle(kind)`: sedan, hatchback, suv, pickup, van, sportscar, taxi, police, ambulance, bus, truck (`rust` for wrecks, `lightsOn`); `drive()`, `beacon()`; `motorcycle`, `helicopter` + `spin()`, `airliner` |
 | `assets/buildings.js` | `house`, `shop`, `apartment`, `office`, `warehouse`, `gasStation`, `ruin`, `streetRow`, `road`, `crossing`, `slab` (windows light up with `emit(b.windows, 2, frame)`) |
 | `assets/nature.js` | `terrain` (biomes: temperate, desert, snow, wasteland, autumn; `land.heightAt(x, y)`), `water` + `waves`, `tree` (oak, pine, palm, birch, dead, autumn, snowy), `forest`, `rock(s)`, `bush`, `grassField`, `flowers`, `mountains` |
 | `assets/street.js` | cone, barrier, hydrant, trashCan, dumpster, mailbox, busStop, billboard, sign, fence, crate, barrel, powerPole + wires, phoneBooth, vendingMachine, lampPost (real light), campfire + flicker, tent, debris |
-| `assets/interior.js` | `room`, sofa, table, chair, bed, tv, bookshelf, floorLamp, rug, plant, desk, fridge, counter |
+| `assets/interior.js` | `room`, sofa, table, chair, bed, tv, bookshelf, floorLamp, rug, plant, desk, fridge, counter; `hall` (tiled ward / shop / closed bathroom with ceiling lights), `vanity`, `mirror` (real reflection), `wallClock` + `runClock` (ticks, then stops), `wallLamp`, `towel` |
+| `assets/characters/cast.js` | fixed named characters for continuity: `elder()` (70-year-old; `age.fade()` melts his wrinkles, `darkenHair()`), `youth()` (red jacket) |
+| `assets/characters/face.js` | `addEyes(person)` for close-ups (blink, widen, gaze, glint = reflection in the eye), `addWrinkles(person)` |
+| `assets/crowd.js` | `mass()` — thousands of instanced people: stand / cheer / mixed poses; idle, cheer, flow, push motions; kids, drab clothes, keep-out zones |
+| `assets/megacity.js` | `megatower()`, `megacity(city)` — overgrown skyline on top of `City`; `rise(f0, f1)` builds it in a time-lapse |
+| `assets/screens.js` | `screen()` video walls with real text (canvas): `newsDraw`, `alertDraw`, `staticDraw`, `flicker()` switch-on |
+| `assets/medical.js` | hospitalBed, ivStand, cabinet, monitor (live ECG) |
+| `assets/market.js` | supermarket `shelf` (stock 0..1), `cart`, `checkout`, `litter` |
+| `assets/fx.js` | `confetti`, `haze` |
+| `studio/camfx.js` | `handheld()`, `shake()`, `roll()` on top of any camera move |
+| `tools/sound.py` | score + SFX: pad, strings, drums, taiko, bell, heartbeat, crowd, shouts, siren, broadcast, klaxon, zap, tick, wind, impact, riser... |
 
 `mat()` gained `gloss`, `opacity`, `vertexColors`; `Buf` gained `loft`, `tube`, `rbox`, `out` (auto-facing), `tint`.
 Shots that do not call `Look.enable()` render exactly as before. Showcase video: `output/ps3-pack_showcase.mp4`.
@@ -69,3 +79,10 @@ in about 50 minutes. On a machine with a GPU it is near real time.
 
 Voices: `michael` (am_michael), `bella` (af_bella).
 The original Blender version of the library is preserved in history at commit `64315ea` (`git checkout 64315ea`).
+
+## Videos made with it
+
+| Video | Folder | Notes |
+|---|---|---|
+| Last Human on Earth, Ep 1 | `series/last-human/ep01` | series |
+| What If Humans Never Aged Again? | `series/what-if/never-aged` | standalone, 13 shots; `script.json` supports silent shots (`"line": "", "dur": 2.6`), per-shot `speed`, and `"fx": "whisper"` |

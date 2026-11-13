@@ -187,6 +187,154 @@ def riser(sec=2.0, gain=0.15):
     return x * gain
 
 
+# ------------------------------------------------------------------ more sfx / score (What If pack)
+def bandpass(x, lo, hi):
+    return lowpass(highpass(x, lo), hi)
+
+
+def tick(gain=0.2):
+    """One clock tick."""
+    t = t_(0.05)
+    x = np.sin(2 * np.pi * 2100 * t) * np.exp(-t * 160) + 0.6 * rng.standard_normal(len(t)) * np.exp(-t * 420)
+    return (x * gain).astype(np.float32)
+
+
+def crowd(sec, gain=0.1, excite=0.0, seed=0):
+    """Crowd bed: murmur (excite 0) up to cheering with whoops (excite 1)."""
+    r = np.random.default_rng(seed + 5)
+    t = t_(sec); x = np.zeros(len(t), np.float32)
+    for lo, hi in ((250, 700), (600, 1500), (1200, 2600 + 1400 * excite)):
+        n = bandpass(r.standard_normal(len(t)).astype(np.float32), lo, hi)
+        am = 0.6 + 0.4 * np.sin(2 * np.pi * r.uniform(0.15, 0.5) * t + r.uniform(0, 6)) * np.sin(2 * np.pi * r.uniform(2.5, 5) * t + r.uniform(0, 6))
+        x += n * am
+    x /= np.abs(x).max()
+    for _ in range(int(sec * 3.5 * excite)):                       # whoops and whistles
+        d = r.uniform(0.25, 0.7); tt = t_(d); f0 = r.uniform(500, 1100)
+        f = f0 * (1 + 0.6 * (tt / d) ** 0.7) * (1 + 0.02 * np.sin(2 * np.pi * 7 * tt))
+        w = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * tt / d) ** 2 * r.uniform(0.15, 0.4)
+        a = int(r.uniform(0, max(0.01, sec - d)) * SR); x[a:a + len(w)] += w[:len(x) - a]
+    return (x * gain * env(len(x), min(0.5, sec / 4), min(0.6, sec / 4))).astype(np.float32)
+
+
+def shouts(sec, gain=0.05, density=1.0, seed=0):
+    """Distant panicked shouting, far away and muffled."""
+    r = np.random.default_rng(seed + 9)
+    x = np.zeros(int(sec * SR), np.float32)
+    for _ in range(max(1, int(sec * density))):
+        d = r.uniform(0.5, 1.3); tt = t_(d); f0 = r.uniform(520, 900)
+        f = f0 * (1 + 0.35 * np.sin(np.pi * tt / d)) * (1 + 0.03 * np.sin(2 * np.pi * 9 * tt))
+        w = (np.sin(2 * np.pi * np.cumsum(f) / SR) + 0.4 * np.sin(4 * np.pi * np.cumsum(f) / SR) + 0.25 * r.standard_normal(len(tt))) * np.sin(np.pi * tt / d) ** 1.5
+        a = int(r.uniform(0, max(0.01, sec - d)) * SR); x[a:a + len(w)] += (w * r.uniform(0.3, 1))[:len(x) - a]
+    x = lowpass(x, 1700)
+    for dl, g in ((0.11, 0.5), (0.23, 0.3), (0.37, 0.18)):          # cheap echo = distance
+        k = int(dl * SR); x[k:] += x[:-k] * g
+    return (x / (np.abs(x).max() + 1e-9) * gain).astype(np.float32)
+
+
+def siren(sec, gain=0.05, rate=0.35, lo=620, hi=980, phase=0.0):
+    """Wailing emergency siren heard from a few streets away."""
+    t = t_(sec)
+    f = lo + (hi - lo) * (0.5 + 0.5 * np.sin(2 * np.pi * rate * t + phase))
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    x = lowpass((np.sin(ph) + 0.35 * np.sin(2 * ph) + 0.2 * np.sin(3 * ph)).astype(np.float32), 1500)
+    k = int(0.19 * SR); x[k:] += x[:-k] * 0.4
+    return (x / np.abs(x).max() * gain * env(len(x), min(1.0, sec / 3), min(1.2, sec / 3))).astype(np.float32)
+
+
+def strings(chords, chord_sec, gain=0.15, cutoff=2600):
+    """Orchestral string section: bright detuned saws with octave doubling and slow tremolo."""
+    out = []
+    for ch in chords:
+        seg = np.zeros(int(chord_sec * SR), np.float32)
+        for n_ in list(ch) + [ch[-1] + 12, ch[0] - 12]:
+            for d in (-0.006, -0.002, 0.003, 0.007):
+                seg += saw(note(n_), chord_sec, d) * 0.25
+        trem = 1 + 0.08 * np.sin(2 * np.pi * 5.5 * t_(chord_sec))
+        out.append(lowpass(seg, cutoff) * trem * env(len(seg), a=chord_sec * 0.22, r=chord_sec * 0.35))
+    hop = int(chord_sec * SR * 0.72)
+    total = np.zeros(hop * (len(out) - 1) + len(out[-1]), np.float32)
+    for i, sgm in enumerate(out):
+        total[i * hop:i * hop + len(sgm)] += sgm
+    return total * gain / max(1e-6, np.abs(total).max())
+
+
+def taiko(gain=0.5, pitch=58):
+    """Big war drum hit."""
+    t = t_(1.1)
+    f = pitch * (1 + 1.4 * np.exp(-t * 28))
+    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 5.5)
+    skin = lowpass(rng.standard_normal(len(t)).astype(np.float32), 2200) * np.exp(-t * 45) * 0.7
+    return ((body + skin) * gain).astype(np.float32)
+
+
+def drums(sec, bpm=96, gain=0.4, pattern=(1, 0, 0, 0.5, 1, 0, 0.7, 0), build=True):
+    """Looped taiko pattern (eighth notes); build=True swells from quiet to full."""
+    x = np.zeros(int(sec * SR) + SR * 2, np.float32); step = 60 / bpm / 2; k = 0
+    for s in np.arange(0, sec, step):
+        v = pattern[k % len(pattern)]; k += 1
+        if not v: continue
+        h = taiko(gain * v * ((0.35 + 0.65 * s / sec) if build else 1), 52 if v >= 1 else 70)
+        a = int(s * SR); x[a:a + len(h)] += h
+    return x[:int(sec * SR) + SR]
+
+
+def rumble(sec, gain=0.15):
+    x = lowpass(rng.standard_normal(int(sec * SR)).astype(np.float32), 55)
+    x *= 0.7 + 0.3 * np.sin(2 * np.pi * 0.23 * t_(sec))
+    return (x / np.abs(x).max() * gain * env(len(x), min(1.5, sec / 3), min(1.5, sec / 3))).astype(np.float32)
+
+
+def broadcast(sec, gain=0.06, seed=0):
+    """TV news heard across a square: urgent sting + unintelligible announcer."""
+    r = np.random.default_rng(seed + 3)
+    t = t_(sec); x = np.zeros(len(t), np.float32)
+    for i, s in enumerate(np.arange(0, min(sec, 1.3), 0.16)):       # sting
+        b = sine(880 if i % 3 else 1320, 0.09) * env(int(0.09 * SR), 0.005, 0.03)
+        a = int(s * SR); x[a:a + len(b)] += b[:len(x) - a] * 0.5
+    f = 125 * (1 + 0.12 * np.sin(2 * np.pi * 0.7 * t) + 0.05 * np.sin(2 * np.pi * 2.3 * t))
+    v = 2 * ((np.cumsum(f) / SR) % 1) - 1
+    syl = np.clip(np.sin(2 * np.pi * 4.3 * t + 1.5 * np.sin(2 * np.pi * 0.9 * t)), 0, 1) ** 0.6
+    form = bandpass(v.astype(np.float32), 500, 900) + 0.7 * bandpass(v.astype(np.float32), 1100, 2200)
+    x += form / (np.abs(form).max() + 1e-9) * syl * 0.8
+    return (bandpass(x, 400, 3200) * gain * env(len(x), 0.05, 0.3)).astype(np.float32)
+
+
+def zap(gain=0.3):
+    """A huge screen snapping on: electrical crack + mains thump."""
+    t = t_(0.9)
+    cr = highpass(rng.standard_normal(len(t)).astype(np.float32), 2500) * np.exp(-t * 14) * (1 + np.sign(np.sin(2 * np.pi * 37 * t))) * 0.5
+    th = np.sin(2 * np.pi * 50 * t) * np.exp(-t * 6) + 0.5 * np.sin(2 * np.pi * 100 * t) * np.exp(-t * 9)
+    return ((cr * 0.6 + th) * gain).astype(np.float32)
+
+
+def klaxon(sec, gain=0.08, f=233):
+    """Slow two-pulse state alarm."""
+    t = t_(sec)
+    x = lowpass(np.sign(np.sin(2 * np.pi * f * t)) * 0.6 + np.sign(np.sin(2 * np.pi * f * 1.5 * t)) * 0.4, 1400)
+    gate = (np.sin(2 * np.pi * 1.1 * t) > -0.2).astype(np.float32)
+    return (x * lowpass(gate, 30) * gain * env(len(x), 0.05, 0.4)).astype(np.float32)
+
+
+def whoosh(sec=1.5, gain=0.2):
+    t = t_(sec); u = t / sec
+    x = bandpass(rng.standard_normal(len(t)).astype(np.float32), 200, 2500) * np.sin(np.pi * u) ** 2 * (0.4 + 0.6 * u)
+    return (x / np.abs(x).max() * gain).astype(np.float32)
+
+
+def heartbeat(sec, bpm=72, gain=0.4, accel=0.0):
+    """Lub-dub heartbeat; accel > 0 speeds it up over the clip."""
+    x = np.zeros(int(sec * SR) + SR, np.float32); k = kick(0.45); s = 0.0
+    while s < sec - 0.4:
+        for off, g in ((0, 1.0), (0.2, 0.65)):
+            a = int((s + off) * SR); x[a:a + len(k)] += k * gain * g
+        s += 60 / (bpm * (1 + accel * s / sec))
+    return lowpass(x[:int(sec * SR)], 180) * 2.2
+
+
+def beep(gain=0.05, f=1000, sec=0.12):
+    return (sine(f, sec) * env(int(sec * SR), 0.005, 0.02) * gain).astype(np.float32)
+
+
 # ------------------------------------------------------------------ track
 class Track:
     def __init__(self, sec):

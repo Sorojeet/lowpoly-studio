@@ -26,6 +26,24 @@ def trim(x, thr=0.004, keep=0.05, sr=24000):
     return x[a:b]
 
 
+def whisper(x, sr, mix=0.8):
+    """Turn a spoken line into a breathy whisper (noise vocoder): "fx": "whisper" on a shot."""
+    from scipy.signal import butter, sosfilt
+    rng = np.random.default_rng(1)
+    edges = np.geomspace(180, min(9000, sr / 2 - 500), 19)
+    out = np.zeros_like(x)
+    lp = butter(2, 40, "low", fs=sr, output="sos")
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        bp = butter(3, [lo, hi], "band", fs=sr, output="sos")
+        e = np.maximum(sosfilt(lp, np.abs(sosfilt(bp, x))), 0)
+        out += sosfilt(bp, rng.standard_normal(len(x)).astype(np.float32)) * e * (1.0 + 1.5 * (lo > 1500))
+    hp = sosfilt(butter(2, 900, "high", fs=sr, output="sos"), x)
+    rms = lambda a: np.sqrt(np.mean(a ** 2) + 1e-12)
+    out *= rms(x) / rms(out)
+    y = mix * out + (1 - mix) * hp
+    return (y * 0.9 * rms(x) / rms(y)).astype(np.float32)
+
+
 def main(script_path, out_dir):
     spec = json.load(open(script_path))
     os.makedirs(out_dir, exist_ok=True)
@@ -33,8 +51,13 @@ def main(script_path, out_dir):
     voice = VOICES.get(spec.get("voice"), spec.get("voice", "am_michael"))
     timing = {}
     for shot in spec["shots"]:
-        samples, sr = k.create(shot["line"], voice=voice, speed=spec.get("speed", 1.0), lang="en-us")
+        if not shot.get("line"):                       # silent shot: fixed length, no narration
+            timing[shot["id"]] = {"voice": 0, "dur": float(shot.get("dur", 2.0))}
+            print(shot["id"], timing[shot["id"]]); continue
+        samples, sr = k.create(shot["line"], voice=voice, speed=shot.get("speed", spec.get("speed", 1.0)), lang="en-us")
         samples = trim(np.asarray(samples, dtype=np.float32), sr=sr)
+        if shot.get("fx") == "whisper":
+            samples = whisper(samples, sr)
         sf.write(f"{out_dir}/{shot['id']}.wav", samples, sr)
         v = len(samples) / sr
         timing[shot["id"]] = {"voice": round(v, 3), "dur": round(v + shot.get("pad", 0.4) + 0.25, 3)}

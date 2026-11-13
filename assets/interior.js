@@ -135,3 +135,101 @@ export function counter(name = 'counter', loc = [0, 0, 0], heading = 0, { w = 2.
   if (sink) { k.b.box(w * 0.2, -0.02, 0.905, 0.5, 0.38, 0.012, h); k.b.tube([w * 0.2, 0.2, 0.92], [w * 0.2, 0.2, 1.15], 0.015, h, 5); k.b.tube([w * 0.2, 0.2, 1.15], [w * 0.2, 0.06, 1.13], 0.015, h, 5); }
   return k.done(loc, heading);
 }
+
+// ------------------------------------------------------------------ halls + bathroom (added for "What If")
+import { Reflector } from 'three/addons/objects/Reflector.js';
+
+/** Tiled hall for wards, shops, corridors. Open toward -Y unless closed: true. o.lights = rows of ceiling strip lights.
+ *  Returns the mesh plus .strips (emissive material), .lamps (PointLights) and .size. */
+export function hall(name = 'hall', loc = [0, 0, 0], { w = 10, d = 8, h = 3.2, wall = '#e4ecec', floor = '#c9d2d4', floor2 = '#b4bfc2', tile = 1, dado = null, closed = false, ceiling = true,
+  lights = [2, 2], lightColor = '#f4fbff', power = 14, trim = '#f2efe8' } = {}) {
+  const k = new K(name), wl = k.c(wall), f1 = k.c(floor), f2 = k.c(floor2), tr = k.c(trim), t = 0.2;
+  const nx = Math.round(w / tile), ny = Math.round(d / tile);
+  for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) k.b.box(-w / 2 + (i + 0.5) * w / nx, -d / 2 + (j + 0.5) * d / ny, -0.1, w / nx, d / ny, 0.1, (i + j) % 2 ? f1 : f2);
+  k.b.box(0, d / 2 + t / 2, 0, w + t * 2, t, h, wl);
+  if (closed) k.b.box(0, -d / 2 - t / 2, 0, w + t * 2, t, h, wl);
+  for (const sx of [-1, 1]) k.b.box(sx * (w / 2 + t / 2), 0, 0, t, d, h, wl);
+  if (dado) {                                             // tiled lower wall with a trim line
+    const dc = k.c(dado), dh = 1.3;
+    k.b.box(0, d / 2 - 0.015, 0, w, 0.03, dh, dc); if (closed) k.b.box(0, -d / 2 + 0.015, 0, w, 0.03, dh, dc);
+    for (const sx of [-1, 1]) k.b.box(sx * (w / 2 - 0.015), 0, 0, 0.03, d, dh, dc);
+    k.b.box(0, d / 2 - 0.03, dh, w, 0.06, 0.05, tr); for (const sx of [-1, 1]) k.b.box(sx * (w / 2 - 0.03), 0, dh, 0.06, d, 0.05, tr);
+  }
+  if (ceiling) k.b.box(0, 0, h, w + t * 2, d + t * 2, 0.15, tr);
+  const strips = mat(`${name}_strips`, '#ffffff', { emit: lightColor, emission: 5 });
+  const lamps = [], [lx, ly] = lights;
+  for (let i = 0; i < lx; i++) for (let j = 0; j < ly; j++) {
+    const x = -w / 2 + (i + 0.5) * w / lx, y = -d / 2 + (j + 0.5) * d / ly;
+    k.b.box(x, y, h - 0.07, 0.35, Math.min(1.8, d / ly * 0.6), 0.07, k.m(strips));
+    lamps.push([x, y]);
+  }
+  const o = k.done(loc, 0, { strips, size: [w, d, h] });
+  o.receiveShadow = true; o.castShadow = false;
+  o.lamps = lamps.map(([x, y]) => { const L = new THREE.PointLight(lightColor, power, Math.max(w, d) * 1.4, 1.3); L.position.set(x, y, h - 0.4); o.add(L); return L; });
+  return o;
+}
+
+/** Wash-basin cabinet with tap, soap and a toothbrush cup. Front faces -Y. */
+export function vanity(name = 'vanity', loc = [0, 0, 0], heading = 0, { w = 1.1, color = '#f1ede4', top = '#d9dde0' } = {}) {
+  const k = new K(name), c = k.c(color), tp = k.c(top, { gloss: 0.5 }), ch = k.c('#c8ccd2', { gloss: 0.9 });
+  k.b.box(0, 0, 0.08, w, 0.5, 0.74, c); k.b.box(0, 0, 0, w - 0.1, 0.44, 0.08, k.c('#3a3d44'));
+  for (const sx of [-1, 1]) { k.b.box(sx * w / 4, -0.255, 0.14, w / 2 - 0.06, 0.02, 0.62, k.c('#e4dfd3')); k.b.box(sx * 0.06, -0.275, 0.5, 0.02, 0.02, 0.12, ch); }
+  k.b.box(0, 0, 0.82, w + 0.06, 0.56, 0.05, tp);
+  k.b.box(0, -0.03, 0.872, 0.52, 0.34, 0.006, k.c('#aeb6ba')); k.b.box(0, -0.03, 0.874, 0.44, 0.27, 0.006, k.c('#8f999e'));   // basin
+  k.b.tube([0, 0.2, 0.87], [0, 0.2, 1.04], 0.02, ch, 6); k.b.tube([0, 0.2, 1.04], [0, 0.06, 1.02], 0.016, ch, 6);
+  for (const sx of [-1, 1]) k.b.cyl(sx * 0.1, 0.2, 0.87, 0.025, 0.05, ch, 6);
+  k.b.cyl(w / 2 - 0.16, 0.14, 0.87, 0.04, 0.11, k.c('#7fb6c9'), 6); k.b.tube([w / 2 - 0.16, 0.14, 0.94], [w / 2 - 0.13, 0.12, 1.09], 0.008, k.c('#e8553c'), 4);
+  k.b.box(-w / 2 + 0.16, 0.15, 0.87, 0.07, 0.05, 0.14, k.c('#e9c46a')); k.b.cyl(-w / 2 + 0.16, 0.15, 1.01, 0.012, 0.04, ch, 5);
+  return k.done(loc, heading);
+}
+
+/** A real mirror (planar reflection). Hang it on a wall; faces -Y at heading 0. */
+export function mirror(name = 'mirror', loc = [0, 0, 0], heading = 0, { w = 0.9, h = 1.1, frame = '#d8dde0', res = 1024 } = {}) {
+  const root = group(loc, null, name); root.rotation.z = heading * D;
+  const b = new Buf(), f = 0.05;
+  b.box(0, 0.03, -h / 2 - f, w + f * 2, 0.05, f, 0); b.box(0, 0.03, h / 2, w + f * 2, 0.05, f, 0);
+  for (const sx of [-1, 1]) b.box(sx * (w / 2 + f / 2), 0.03, -h / 2, f, 0.05, h, 0);
+  b.box(0, 0.05, -h / 2 - f, w + f * 2, 0.02, h + f * 2, 0);
+  root.add(b.mesh([mat(`${name}_frame`, frame, { gloss: 0.6 })]));
+  const glass = new Reflector(new THREE.PlaneGeometry(w, h), { textureWidth: res, textureHeight: Math.round(res * h / w), color: 0xdfe8ea, clipBias: 0.003 });
+  glass.rotation.set(90 * D, 0, 0); glass.position.y = 0.02;
+  root.add(glass);
+  return Object.assign(root, { glass });
+}
+
+/** Round wall clock; faces -Y. runClock(clock, f0, f1, { stopAt }) makes the second hand tick once a second, then freeze. */
+export function wallClock(name = 'clock', loc = [0, 0, 0], heading = 0, { r = 0.17, time = [6, 12] } = {}) {
+  const root = group(loc, null, name); root.rotation.z = heading * D;
+  const b = new Buf();
+  b.tube([0, 0.03, 0], [0, 0, 0], r + 0.02, 0, 16); b.tube([0, -0.001, 0], [0, -0.004, 0], r, 1, 16);
+  for (let i = 0; i < 12; i++) { const a = i * 30 * D; b.tube([Math.sin(a) * r * 0.78, -0.006, Math.cos(a) * r * 0.78], [Math.sin(a) * r * 0.92, -0.006, Math.cos(a) * r * 0.92], i % 3 ? 0.004 : 0.008, 2, 4); }
+  root.add(b.mesh([mat(`${name}_rim`, '#2a2d33'), mat(`${name}_face`, '#f4f1e8'), mat(`${name}_mark`, '#22242a')]));
+  const hand = (len, wd, color, deg) => { const hb = new Buf(); hb.box(0, 0, -len * 0.15, wd, 0.004, len * 1.15, 0); const m = hb.mesh([mat(`${name}_h${color}`, color)]); m.castShadow = false; const g = group([0, -0.012, 0], root); g.add(m); g.rotation.y = deg * D; return g; };
+  const [hh, mm] = time;
+  hand(r * 0.5, 0.016, '#22242a', (hh % 12) * 30 + mm * 0.5); hand(r * 0.75, 0.012, '#22242a', mm * 6);
+  const sec = hand(r * 0.85, 0.006, '#d8201c', 0); sec.position.y = -0.018;
+  return Object.assign(root, { sec });
+}
+export function runClock(clock, f0, f1, { stopAt = null, start = 20 } = {}) {
+  let s = start;
+  for (let f = f0; f <= f1; f += 30, s++) {
+    if (stopAt !== null && f >= stopAt) break;
+    stage.A.key(clock.sec, 'rotation', f, [0, s * 6 * D, 0], 'CONSTANT'); stage.A.key(clock.sec, 'rotation', f + 2, [0, (s + 1.25) * 6 * D, 0], 'CONSTANT'); stage.A.key(clock.sec, 'rotation', f + 4, [0, (s + 1) * 6 * D, 0], 'CONSTANT');
+  }
+}
+
+/** Light bar for above a mirror (glows + lights the room). */
+export function wallLamp(name = 'wlamp', loc = [0, 0, 0], heading = 0, { w = 0.7, color = '#ffe6c0', power = 5 } = {}) {
+  const k = new K(name), m = mat(`${name}_glow`, '#fff6e6', { emit: color, emission: 5 });
+  k.b.box(0, 0.03, 0, w + 0.06, 0.06, 0.07, k.c('#c8ccd2', { gloss: 0.8 })); k.b.box(0, -0.035, 0.005, w, 0.07, 0.06, k.m(m));
+  const o = k.done(loc, heading, { glow: m });
+  o.light = new THREE.PointLight(color, power, 8, 1.6); o.light.position.set(0, -0.35, -0.1); o.light.castShadow = true; o.light.shadow.mapSize.set(1024, 1024); o.light.shadow.bias = -0.002; o.add(o.light);
+  return o;
+}
+
+/** Towel on a rail. */
+export function towel(name = 'towel', loc = [0, 0, 0], heading = 0, { color = '#c96a5a' } = {}) {
+  const k = new K(name); k.b.tube([-0.3, 0, 0], [0.3, 0, 0], 0.012, k.c('#c8ccd2', { gloss: 0.9 }), 5);
+  k.b.box(0, -0.02, -0.5, 0.42, 0.03, 0.52, k.c(color)); k.b.box(0, 0.02, -0.3, 0.42, 0.03, 0.32, k.c(color));
+  return k.done(loc, heading);
+}

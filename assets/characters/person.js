@@ -7,7 +7,7 @@
 //   const people = crowd(12, { x: [-10, 10], y: [-4, 4] }, { seed: 3, idle: [1, 150] });
 //
 // outfit: casual | hoodie | suit | worker | police | doctor | dress | soldier | farmer
-// hair:   short | long | bun | ponytail | spiky | afro | bald      hat: cap | beanie | helmet | police | straw | none
+// hair:   short | long | bun | ponytail | spiky | afro | bald | balding (bare crown, hair at the sides) | neat (fitted short cut with fringe)      hat: cap | beanie | helmet | police | straw | none
 // Other options: shirt, pants, shoes, hairColor (hex), height (1 = 1.78 m), build (width, 1 = average),
 //                backpack (colour or false), glasses, beard (bool)
 import { THREE, D, Rand, Buf, mat, group, icoGeom } from '../../studio/core.js';
@@ -105,7 +105,27 @@ export class Person extends Rig {
     if (o.glasses) { const gl = p.mi('#1b1d22'); for (const sx of [-1, 1]) p.b.box(0.05 * sx, -0.14, 0.152, 0.06, 0.01, 0.05, gl); p.b.box(0, -0.14, 0.175, 0.26, 0.01, 0.012, gl); }
     const blob = (rad, sc, pos, seed = 5, jit = 0.07, mi = hc) => { const g = icoGeom(rad, { subdiv: 2, scale: sc, jitter: jit, seed }); g.translate(...pos); p.b.geom(g, mi); };
     const hatted = hat !== 'none';
-    if (hair !== 'bald') {
+    // fitted hair shell: a slightly larger copy of the skull, kept only where `keep(x, y, z)` says hair grows
+    const shell = (keep, grow = 1.1, mi = hc) => {
+      const g = icoGeom(0.135 * grow, { subdiv: 3, scale: [0.97, 1.04, 1.12] }); g.translate(0, 0.004, 0.172);
+      const q = g.attributes.position;
+      for (let i = 0; i < q.count; i += 3) {
+        const v = [0, 1, 2].map(k => [q.getX(i + k), q.getY(i + k), q.getZ(i + k)]);
+        const c = [0, 1, 2].map(k => (v[0][k] + v[1][k] + v[2][k]) / 3);
+        if (keep(c[0], c[1], c[2])) p.b.tri(mi, v[0], v[1], v[2]);
+      }
+    };
+    const line = y => 0.262 - 0.19 * Math.min(1, Math.max(0, (y + 0.085) / 0.13));   // hairline: high on the forehead, low at the nape
+    if (hair === 'balding') {            // bare crown, a band of hair round the sides and back
+      shell((x, y, z) => y > -0.05 && z > line(y) - 0.02 && z < 0.262 - Math.max(0, y) * 0.25, 1.1);
+      for (const sx of [-1, 1]) p.b.box(0.132 * sx, -0.02, 0.15, 0.03, 0.1, 0.09, hc, 0.8);
+    } else if (hair === 'neat') {        // short, tidy cut with a side-swept fringe
+      shell((x, y, z) => z > line(y), 1.12);
+      shell((x, y, z) => z > 0.275, 1.22);                                             // extra volume on top
+      p.b.rbox(0.012, -0.112, 0.258, 0.215, 0.085, 0.062, 0.1, hc, 0.82);              // fringe, swept slightly to one side
+      for (const sx of [-1, 1]) p.b.box(0.13 * sx, -0.045, 0.165, 0.024, 0.045, 0.085, hc, 0.7);                       // sideburns
+    }
+    else if (hair !== 'bald') {
       if (hair === 'afro') blob(0.19, [1, 1, 0.95], [0, 0.02, 0.24], 5, 0.1);
       else blob(0.145, [1, 1.04, hatted ? 0.72 : 0.82], [0, 0.028, 0.215]);
       if (hair === 'long') p.b.box(0, 0.1, -0.1, 0.25, 0.09, 0.34, hc, 1.05);

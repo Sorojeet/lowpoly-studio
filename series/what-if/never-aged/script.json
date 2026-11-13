@@ -1,0 +1,22 @@
+{
+  "series": "what-if",
+  "title": "What If Humans Never Aged Again?",
+  "voice": "am_michael",
+  "speed": 0.92,
+  "shots": [
+    { "id": "s01_eyes", "line": "", "dur": 2.6 },
+    { "id": "s02_mirror", "pad": 0.9, "line": "November 14th, 2026. Humanity woke up to something impossible. Nobody was getting older." },
+    { "id": "s03_aerial", "pad": 1.0, "line": "Scientists were shocked." },
+    { "id": "s04_hospital", "pad": 0.6, "line": "Doctors had no explanation." },
+    { "id": "s05_news", "pad": 0.7, "line": "Governments declared it the greatest miracle in human history." },
+    { "id": "s06_timelapse", "pad": 1.3, "line": "But ten years later, the celebration ended." },
+    { "id": "s07_crowded", "pad": 0.5, "line": "People were no longer dying of old age. Yet new children were still being born." },
+    { "id": "s08_market", "pad": 0.5, "line": "Food disappeared. Jobs vanished. Housing became impossible." },
+    { "id": "s09_barricade", "pad": 0.6, "line": "The world had a new problem. There were too many people, and almost nobody was leaving." },
+    { "id": "s10_rooftop", "pad": 1.1, "line": "Humanity had achieved its oldest dream. Immortality. But nobody had asked the most important question..." },
+    { "id": "s11_screen", "line": "", "dur": 3.4 },
+    { "id": "s12_eyes", "pad": 1.2, "speed": 0.8, "fx": "whisper", "line": "If nobody can die... who gets to live?" },
+    { "id": "s13_end", "line": "", "dur": 2.8 }
+  ],
+  "end_card": { "top": "TO BE CONTINUED..." }
+}
