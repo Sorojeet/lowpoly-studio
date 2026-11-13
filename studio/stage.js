@@ -24,7 +24,7 @@ export function reset() {
   if (stage.renderer) stage.renderer.toneMappingExposure = 1.15;
   stage.scene = new THREE.Scene();
   stage.A = new Animator();
-  stage.camera = null;
+  stage.camera = null; stage.pre = [];
   resetMats();
   Lt.setup();
 }
@@ -49,4 +49,4 @@ export function camera(loc, target, lens = 35) {
 export function move(ob, keys, interp = 'BEZIER') { for (const [f, p] of keys) stage.A.key(ob, 'position', f, p, interp); }
 
 export function update(f) { stage.A.update(f); }
-export function render() { if (stage.look) Look.render(); else stage.renderer.render(stage.scene, stage.camera); }
+export function render() { for (const h of stage.pre || []) h(); if (stage.look) Look.render(); else stage.renderer.render(stage.scene, stage.camera); }

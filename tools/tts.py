@@ -1,6 +1,7 @@
 """Narration with Kokoro (offline, ONNX).
 
 Usage: python3 tools/tts.py series/last-human/ep01/script.json build/last-human/ep01
+(Multi-character videos: give "cues" instead of shot lines — see cues() below.)
 Writes one wav per shot plus timing.json: {shot_id: {"voice": secs, "dur": secs incl. pad}}.
 Voices: am_michael (deep male), af_bella (warm female), see VOICES below.
 Models are fetched by tools/fetch_models.sh into ~/.cache/lowpoly-studio/models.
@@ -44,10 +45,30 @@ def whisper(x, sr, mix=0.8):
     return (y * 0.9 * rms(x) / rms(y)).astype(np.float32)
 
 
+def cues(spec, out_dir, k, only=None):
+    """Multi-voice mode: "cues": [{"id", "voice", "text", "speed", "fx": "whisper", "mix": 0.55}].
+    One wav per cue; timing.json gets {"cues": {id: secs}} and fixed shot lengths from "shots": [{"id", "dur"}]."""
+    out = {"cues": {}}
+    for c in spec["cues"]:
+        v = VOICES.get(c.get("voice"), c.get("voice", spec.get("voice", "am_michael")))
+        x, sr = k.create(c["text"], voice=v, speed=c.get("speed", spec.get("speed", 1.0)), lang=c.get("lang", "en-us"))
+        x = trim(np.asarray(x, dtype=np.float32), sr=sr)
+        if c.get("fx") == "whisper":
+            x = whisper(x, sr, c.get("mix", 0.8))
+        sf.write(f"{out_dir}/{c['id']}.wav", x, sr)
+        out["cues"][c["id"]] = round(len(x) / sr, 3)
+        print(c["id"], v, out["cues"][c["id"]], "s")
+    for sh in spec.get("shots", []):
+        out[sh["id"]] = {"voice": 0, "dur": float(sh["dur"]), "cues": sh.get("cues", [])}   # cues: [[cue_id, secs into shot]]
+    json.dump(out, open(f"{out_dir}/timing.json", "w"), indent=1)
+
+
 def main(script_path, out_dir):
     spec = json.load(open(script_path))
     os.makedirs(out_dir, exist_ok=True)
     k = load()
+    if "cues" in spec:
+        return cues(spec, out_dir, k)
     voice = VOICES.get(spec.get("voice"), spec.get("voice", "am_michael"))
     timing = {}
     for shot in spec["shots"]:

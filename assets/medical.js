@@ -1,6 +1,6 @@
 // MEDICAL — hospital ward props.  Fronts face -Y.
 //   hospitalBed('bed1', [x, y, 0], heading, { blanket: '#6fb3b0' })   ivStand('iv', loc)   cabinet('cab', loc, heading)
-//   const m = monitor('mon', [x, y, 0], heading);       // vital-signs monitor on a trolley, live ECG trace (m.screen)
+//   const m = monitor('mon', [x, y, 0], heading, { draw: ecg({ bpm: 80, panicAt: 30, flatAt: 120 }) });   // live ECG; racing, then flatline
 import { THREE, stage, D, Buf, mat, group } from '../studio/core.js';
 import { screen } from './screens.js';
 
@@ -35,22 +35,31 @@ export function cabinet(name = 'cab', loc = [0, 0, 0], heading = 0, { w = 1.0, h
   for (let i = 0; i < 3; i++) { k.b.box(0, -0.255, 0.08 + i * (h - 0.1) / 3, w - 0.08, 0.02, (h - 0.1) / 3 - 0.04, d); k.b.box(0, -0.275, 0.08 + (i + 0.45) * (h - 0.1) / 3, 0.2, 0.02, 0.03, k.c(STEEL, { gloss: 0.7 })); }
   return k.done(loc, heading);
 }
-const ecgDraw = (c, W, H, f) => {
+export const ecg = ({ bpm = 70, flatAt = null, panicAt = null } = {}) => (c, W, H, f) => {
   c.fillStyle = '#05100c'; c.fillRect(0, 0, W, H);
   c.strokeStyle = '#123a2a'; c.lineWidth = 1; for (let x = 0; x < W; x += W / 12) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); } for (let y = 0; y < H; y += H / 8) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
   const beat = u => { const p = u % 1; return p < 0.08 ? Math.sin(p / 0.08 * Math.PI) * 0.12 : p < 0.16 ? 0 : p < 0.19 ? -(p - 0.16) / 0.03 * 0.15 : p < 0.23 ? -0.15 + (p - 0.19) / 0.04 * 1.0 : p < 0.27 ? 0.85 - (p - 0.23) / 0.04 * 1.1 : p < 0.3 ? -0.25 + (p - 0.27) / 0.03 * 0.25 : p < 0.5 ? Math.sin((p - 0.3) / 0.2 * Math.PI) * 0.2 : 0; };
-  for (const [y0, col, sp, amp] of [[H * 0.3, '#4dff88', 1, 0.22], [H * 0.62, '#4dc3ff', 0.7, 0.1], [H * 0.86, '#ffd24a', 0.4, 0.06]]) {
+  const flat = flatAt !== null && f >= flatAt, rate = (panicAt !== null && f >= panicAt ? 2.3 : 1) * bpm / 70;
+  const sweep = 6, head = (f * sweep) % W;
+  for (const [y0, col, sp, amp] of [[H * 0.3, flat ? '#ff4d4d' : '#4dff88', 1, 0.22], [H * 0.62, '#4dc3ff', 0.7, 0.1], [H * 0.86, '#ffd24a', 0.4, 0.06]]) {
     c.strokeStyle = col; c.lineWidth = H * 0.02; c.beginPath();
-    const head = (f * 6) % W;
-    for (let x = 0; x < W; x += 3) { if (x > head && x < head + W * 0.06) { c.stroke(); c.beginPath(); continue; } const y = y0 - beat(x / W * 3.2 * sp + 0.1) * H * amp * 3; x ? c.lineTo(x, y) : c.moveTo(x, y); }
+    for (let x = 0; x < W; x += 3) {
+      if (x > head && x < head + W * 0.06) { c.stroke(); c.beginPath(); continue; }
+      const fx = x <= head ? f - (head - x) / sweep : f - (head + W - x) / sweep;          // frame this pixel was drawn
+      const dead = flatAt !== null && fx >= flatAt;
+      const y = y0 - (dead ? 0 : beat(fx / 30 * rate * 1.17 * sp + 0.1) * H * amp * 3);
+      x ? c.lineTo(x, y) : c.moveTo(x, y);
+    }
     c.stroke();
   }
+  if (flat && Math.floor(f / 8) % 2) { c.fillStyle = '#ff4d4d'; c.font = `${H * 0.14}px sans-serif`; c.textAlign = 'right'; c.fillText('!', W * 0.96, H * 0.16); }
 };
-export function monitor(name = 'monitor', loc = [0, 0, 0], heading = 0) {
+const ecgDraw = ecg();
+export function monitor(name = 'monitor', loc = [0, 0, 0], heading = 0, { draw = ecgDraw } = {}) {
   const k = new K(name), st = k.c(STEEL, { gloss: 0.7 });
   k.b.cyl(0, 0, 0, 0.25, 0.05, k.c('#3a3d44'), 8); k.b.cyl(0, 0, 0.05, 0.025, 1.15, st, 6); k.b.box(0, 0, 1.0, 0.36, 0.3, 0.03, st);
   const o = k.done(loc, heading);
-  const s = screen(`${name}_scr`, [0, -0.06, 1.42], 0, { w: 0.5, h: 0.36, px: 256, glow: 2.2, draw: ecgDraw, live: true, depth: 0.12, bezel: 0.03, frame: '#e4e8ea' });
+  const s = screen(`${name}_scr`, [0, -0.06, 1.42], 0, { w: 0.5, h: 0.36, px: 256, glow: 2.2, draw, live: true, depth: 0.12, bezel: 0.03, frame: '#e4e8ea' });
   o.add(s); s.position.set(0, -0.06, 1.42);
   return Object.assign(o, { screen: s });
 }

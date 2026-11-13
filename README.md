@@ -41,14 +41,16 @@ module: `series/showcase/ps3-pack/shots.js` (`node tools/render.mjs showcase/ps3
 | `assets/nature.js` | `terrain` (biomes: temperate, desert, snow, wasteland, autumn; `land.heightAt(x, y)`), `water` + `waves`, `tree` (oak, pine, palm, birch, dead, autumn, snowy), `forest`, `rock(s)`, `bush`, `grassField`, `flowers`, `mountains` |
 | `assets/street.js` | cone, barrier, hydrant, trashCan, dumpster, mailbox, busStop, billboard, sign, fence, crate, barrel, powerPole + wires, phoneBooth, vendingMachine, lampPost (real light), campfire + flicker, tent, debris |
 | `assets/interior.js` | `room`, sofa, table, chair, bed, tv, bookshelf, floorLamp, rug, plant, desk, fridge, counter; `hall` (tiled ward / shop / closed bathroom with ceiling lights), `vanity`, `mirror` (real reflection), `wallClock` + `runClock` (ticks, then stops), `wallLamp`, `towel` |
-| `assets/characters/cast.js` | fixed named characters for continuity: `elder()` (70-year-old; `age.fade()` melts his wrinkles, `darkenHair()`), `youth()` (red jacket) |
+| `assets/characters/cast.js` | fixed named characters for continuity: `elder()` (70-year-old; `age.fade()` melts his wrinkles, `darkenHair()`), `youth()` (red jacket), `scientist()` (elderly, white hair, wire glasses), `official()` (broadcast official) |
 | `assets/characters/face.js` | `addEyes(person)` for close-ups (blink, widen, gaze, glint = reflection in the eye), `addWrinkles(person)` |
 | `assets/crowd.js` | `mass()` — thousands of instanced people: stand / cheer / mixed poses; idle, cheer, flow, push motions; kids, drab clothes, keep-out zones |
 | `assets/megacity.js` | `megatower()`, `megacity(city)` — overgrown skyline on top of `City`; `rise(f0, f1)` builds it in a time-lapse |
-| `assets/screens.js` | `screen()` video walls with real text (canvas): `newsDraw`, `alertDraw`, `staticDraw`, `flicker()` switch-on |
+| `assets/screens.js` | `screen()` video walls with real text (canvas): `newsDraw`, `alertDraw`, `staticDraw`, `terminalDraw` (typed lines), `dataDraw`, `signDraw` + `matte: true` for printed signs, `flicker()`; `liveFeed()` = a second camera shown on screens (broadcasts) |
 | `assets/medical.js` | hospitalBed, ivStand, cabinet, monitor (live ECG) |
 | `assets/market.js` | supermarket `shelf` (stock 0..1), `cart`, `checkout`, `litter` |
 | `assets/fx.js` | `confetti`, `haze` |
+| `assets/lab.js` | underground lab: `labDesk` (1-3 monitors, one can stand upright), `serverRack`, `sampleRack`, `microscope`, `files`, `slidingDoor` (lock light + slide), `glassWall` (observation window), `bunkBed`, `fenceGate` |
+| `assets/drone.js` | police `drone()` with spinning rotors, red/blue lights, searchlight beam; `fly()` |
 | `studio/camfx.js` | `handheld()`, `shake()`, `roll()` on top of any camera move |
 | `tools/sound.py` | score + SFX: pad, strings, drums, taiko, bell, heartbeat, crowd, shouts, siren, broadcast, klaxon, zap, tick, wind, impact, riser... |
 
@@ -85,4 +87,5 @@ The original Blender version of the library is preserved in history at commit `6
 | Video | Folder | Notes |
 |---|---|---|
 | Last Human on Earth, Ep 1 | `series/last-human/ep01` | series |
-| What If Humans Never Aged Again? | `series/what-if/never-aged` | standalone, 13 shots; `script.json` supports silent shots (`"line": "", "dur": 2.6`), per-shot `speed`, and `"fx": "whisper"` |
+| What If Humans Never Aged Again? | `series/what-if/never-aged` | Part 1, 13 shots; `script.json` supports silent shots (`"line": "", "dur": 2.6`), per-shot `speed`, and `"fx": "whisper"` |
+| ... Part 2: The Price of Immortality | `series/what-if/never-aged-2` | 19 shots, multi-voice: `script.json` has `cues` (one line each, own Kokoro voice) placed in shots as `[cue, secs]`; fixed shot lengths; voice-first mix |

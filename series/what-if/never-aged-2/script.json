@@ -1,0 +1,250 @@
+{
+ "voice": "am_michael",
+ "speed": 0.94,
+ "cues": [
+  {
+   "id": "n01",
+   "text": "Nobody knew what would happen next. Behind closed doors, the world's leaders had already decided."
+  },
+  {
+   "id": "o01",
+   "voice": "am_onyx",
+   "speed": 0.95,
+   "text": "Effective immediately, all childbirth is prohibited. Every pregnancy must be registered. Violators will be imprisoned."
+  },
+  {
+   "id": "n02",
+   "text": "Stop new births, and the population would stabilize. Or so they believed."
+  },
+  {
+   "id": "n03",
+   "text": "But the law couldn't undo the damage. Billions still needed food, water, power, and a place to live."
+  },
+  {
+   "id": "p01",
+   "voice": "af_bella",
+   "speed": 1.05,
+   "text": "We stopped aging! We didn't agree to stop living!"
+  },
+  {
+   "id": "n04",
+   "text": "People had wanted eternal life. Now they were fighting for the right to have a future."
+  },
+  {
+   "id": "n05",
+   "text": "While the world blamed overpopulation, scientists found another problem. The human body was still vulnerable."
+  },
+  {
+   "id": "s01",
+   "voice": "bm_george",
+   "speed": 0.9,
+   "text": "Impossible... We've stopped aging, but we haven't stopped the damage."
+  },
+  {
+   "id": "d01",
+   "voice": "am_eric",
+   "speed": 0.95,
+   "text": "His body never aged... but the disease destroyed his organs."
+  },
+  {
+   "id": "n06",
+   "speed": 0.88,
+   "text": "Immortality had never meant invincibility."
+  },
+  {
+   "id": "s02",
+   "voice": "bm_george",
+   "speed": 0.85,
+   "fx": "whisper",
+   "mix": 0.5,
+   "text": "No... They can't actually do this."
+  },
+  {
+   "id": "n07",
+   "speed": 0.9,
+   "fx": "whisper",
+   "mix": 0.55,
+   "text": "But the most terrifying discovery wasn't that the government had a plan..."
+  }
+ ],
+ "title": "What If Humans Never Aged Again? Part 2: The Price of Immortality",
+ "series": "what-if",
+ "end_card": {
+  "top": "TO BE CONTINUED...",
+  "bottom": "PART 3: THE GREAT RESET"
+ },
+ "speakers": {
+  "o01": "OFFICIAL",
+  "p01": "PROTESTER",
+  "s01": "SCIENTIST",
+  "d01": "DOCTOR",
+  "s02": "SCIENTIST"
+ },
+ "shots": [
+  {
+   "id": "sh01_eyes",
+   "dur": 2.5,
+   "scene": 1
+  },
+  {
+   "id": "sh02_pullback",
+   "dur": 9.5,
+   "scene": 1,
+   "cues": [
+    [
+     "n01",
+     2.4
+    ]
+   ]
+  },
+  {
+   "id": "sh03_broadcast",
+   "dur": 7.6,
+   "scene": 2,
+   "cues": [
+    [
+     "o01",
+     0.45
+    ]
+   ]
+  },
+  {
+   "id": "sh04_screens",
+   "dur": 5.4,
+   "scene": 2,
+   "cues": [
+    [
+     "n02",
+     0.2
+    ]
+   ]
+  },
+  {
+   "id": "sh05_apartment",
+   "dur": 3.3,
+   "scene": 3,
+   "cues": [
+    [
+     "n03",
+     0.6
+    ]
+   ]
+  },
+  {
+   "id": "sh06_shelves",
+   "dur": 3.0,
+   "scene": 3
+  },
+  {
+   "id": "sh07_queue",
+   "dur": 3.4,
+   "scene": 3
+  },
+  {
+   "id": "sh08_jobs",
+   "dur": 3.3,
+   "scene": 3
+  },
+  {
+   "id": "sh09_protest",
+   "dur": 5.0,
+   "scene": 4,
+   "cues": [
+    [
+     "p01",
+     0.9
+    ]
+   ]
+  },
+  {
+   "id": "sh10_police",
+   "dur": 7.0,
+   "scene": 4,
+   "cues": [
+    [
+     "n04",
+     1.0
+    ]
+   ]
+  },
+  {
+   "id": "sh11_lab",
+   "dur": 5.0,
+   "scene": 5,
+   "cues": [
+    [
+     "n05",
+     0.6
+    ]
+   ]
+  },
+  {
+   "id": "sh12_monitor",
+   "dur": 4.0,
+   "scene": 5
+  },
+  {
+   "id": "sh13_scientist",
+   "dur": 6.0,
+   "scene": 5,
+   "cues": [
+    [
+     "s01",
+     0.9
+    ]
+   ]
+  },
+  {
+   "id": "sh14_patient",
+   "dur": 5.8,
+   "scene": 6
+  },
+  {
+   "id": "sh15_window",
+   "dur": 7.2,
+   "scene": 6,
+   "cues": [
+    [
+     "d01",
+     0.4
+    ],
+    [
+     "n06",
+     4.1
+    ]
+   ]
+  },
+  {
+   "id": "sh16_file",
+   "dur": 4.0,
+   "scene": 7
+  },
+  {
+   "id": "sh17_whisper",
+   "dur": 3.0,
+   "scene": 7,
+   "cues": [
+    [
+     "s02",
+     0.35
+    ]
+   ]
+  },
+  {
+   "id": "sh18_door",
+   "dur": 5.0,
+   "scene": 7,
+   "cues": [
+    [
+     "n07",
+     0.3
+    ]
+   ]
+  },
+  {
+   "id": "sh19_end",
+   "dur": 2.6,
+   "scene": 8
+  }
+ ]
+}

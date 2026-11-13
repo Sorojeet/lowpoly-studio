@@ -60,7 +60,9 @@ Style: EndSub,Poppins,50,&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,1,0,0,0,100
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
     rows = []
-    for start, dur, line in events:
+    for ev in events:
+        start, dur, line = ev[:3]
+        col = f"\\c{ev[3]}" if len(ev) > 3 else ""          # optional 4th item: ASS colour for that speaker
         cs = chunks(line)
         weights = [len(c) + 4 for c in cs]
         tot = sum(weights); t = start
@@ -68,7 +70,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             d = dur * w / tot
             txt = c.upper().replace("…", "...")
             pop = r"{\fscx80\fscy80\t(0,90,\fscx106\fscy106)\t(90,160,\fscx100\fscy100)}"
-            rows.append(f"Dialogue: 1,{_ts(t)},{_ts(t + d)},Cap,,0,0,0,,{{\\pos({W // 2},1430)}}{pop}{txt}")
+            rows.append(f"Dialogue: 1,{_ts(t)},{_ts(t + d)},Cap,,0,0,0,,{{\\pos({W // 2},1430){col}}}{pop}{txt}")
             t += d
     if badge and total:
         rows.append(f"Dialogue: 0,{_ts(0)},{_ts(total)},Badge,,0,0,0,,{{\\fad(400,400)}}{badge}")

@@ -335,6 +335,61 @@ def beep(gain=0.05, f=1000, sec=0.12):
     return (sine(f, sec) * env(int(sec * SR), 0.005, 0.02) * gain).astype(np.float32)
 
 
+# ------------------------------------------------------------------ Part 2 additions
+def rotor(sec, gain=0.05, f=118, seed=0):
+    """Drone / quadcopter whine with a little Doppler wobble."""
+    r = np.random.default_rng(seed + 31); t = t_(sec)
+    ff = f * (1 + 0.03 * np.sin(2 * np.pi * 0.4 * t + r.uniform(0, 6)))
+    ph = 2 * np.pi * np.cumsum(ff) / SR
+    x = np.sign(np.sin(ph)) * 0.4 + np.sin(2 * ph) * 0.3 + np.sin(4.02 * ph) * 0.2
+    x = lowpass(x.astype(np.float32), 2400) + 0.25 * bandpass(rng.standard_normal(len(t)).astype(np.float32), 600, 3000)
+    return (x / np.abs(x).max() * gain * env(len(x), min(0.8, sec / 3), min(0.8, sec / 3))).astype(np.float32)
+
+
+def march(sec, bpm=104, gain=0.15):
+    """Heavy synchronized boots."""
+    x = np.zeros(int(sec * SR) + SR, np.float32); step = 60 / bpm
+    for i, s in enumerate(np.arange(0, sec, step)):
+        t = t_(0.25); h = (np.sin(2 * np.pi * 70 * t) * np.exp(-t * 30) + 0.7 * lowpass(rng.standard_normal(len(t)).astype(np.float32), 1500) * np.exp(-t * 40))
+        a = int(s * SR); x[a:a + len(h)] += h * gain * (1 if i % 2 else 0.8)
+    return x[:int(sec * SR)]
+
+
+def flatline(sec, gain=0.05, f=980):
+    return (sine(f, sec) * env(int(sec * SR), 0.01, 0.05) * gain).astype(np.float32)
+
+
+def typing(sec, gain=0.06, rate=9, seed=0):
+    r = np.random.default_rng(seed + 41); x = np.zeros(int(sec * SR), np.float32); s = 0.0
+    while s < sec - 0.05:
+        t = t_(0.02); c = highpass(r.standard_normal(len(t)).astype(np.float32), 1800) * np.exp(-t * 400)
+        a = int(s * SR); x[a:a + len(c)] += c[:len(x) - a] * r.uniform(0.6, 1)
+        s += r.exponential(1 / rate) + 0.03
+    return x * gain
+
+
+def hiss(sec=0.9, gain=0.12):
+    """Pneumatic door."""
+    t = t_(sec); u = t / sec
+    x = highpass(rng.standard_normal(len(t)).astype(np.float32), 2500) * np.exp(-u * 3) + 0.4 * lowpass(rng.standard_normal(len(t)).astype(np.float32), 300) * np.sin(np.pi * u)
+    return (x / np.abs(x).max() * gain).astype(np.float32)
+
+
+def radio(x, lo=250, hi=4200, drive=1.6):
+    """Broadcast / PA colour for a voice (keeps it intelligible)."""
+    y = bandpass(x, lo, hi)
+    y = np.tanh(y * drive / (np.abs(y).max() + 1e-9)) * (np.abs(x).max())
+    return y.astype(np.float32)
+
+
+def room(x, wet=0.18, delays=(0.031, 0.047, 0.071, 0.093)):
+    """Small-room reflections, so a voice sits in its space."""
+    y = x.copy()
+    for i, d in enumerate(delays):
+        k = int(d * SR); y[k:] += lowpass(x[:-k], 3000) * wet * (0.8 ** i)
+    return y
+
+
 # ------------------------------------------------------------------ track
 class Track:
     def __init__(self, sec):
