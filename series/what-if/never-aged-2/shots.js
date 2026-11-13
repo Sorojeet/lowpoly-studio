@@ -201,7 +201,7 @@ function sh05_apartment(n) {
   const bb = new Buf(); bb.cyl(0, 0.2, 2.9, 0.05, 0.1, 0, 6); bb.tube([0, 0.2, 3.0], [0, 0.2, 3.2], 0.006, 1, 3);
   stage.scene.add(bb.mesh([mat('bulb', '#fff2d0', { emission: 8 }), mat('cord', '#222')]));
   Scr.screen('win', [0.9, 2.34, 1.7], 0, { w: 1.1, h: 1.1, px: 128, draw: (c, W, H) => { c.fillStyle = '#18233a'; c.fillRect(0, 0, W, H); c.fillStyle = '#ffd58a'; for (let i = 0; i < 30; i++) c.fillRect((i * 37) % W, (i * 53) % H, 6, 8); }, glow: 0.8, depth: 0.05, bezel: 0.05, frame: '#5a4a3a' });
-  const S12 = 1.12, LOWER = 0.58, UPPER = 1.59;                      // bunks scaled up to adult size
+  const S12 = 1.12, LOWER = 0.58, UPPER = (1.6 + 0.17) * 1.12;      // top bunk raised so people can sit up underneath                      // bunks scaled up to adult size
   const bunk = (nm, loc, hd, bl) => { const o = Lab.bunkBed(nm, loc, hd, bl ? { blanket: bl } : {}); o.scale.setScalar(S12); return o; };
   bunk('bA', [-2.45, 1.15, 0], 0); bunk('bB', [-0.85, 1.15, 0], 0, ['#c96a5a', '#5a7f9a']); bunk('bC', [1.95, 1.75, 0], 90, ['#8cbf5f', '#e0b23c']);
   const mt = new Buf(); for (const [x, y, c] of [[1.1, -1.35, 0], [-0.2, -1.6, 1]]) { mt.box(x, y, 0, 0.85, 1.8, 0.12, 2); mt.box(x, y - 0.3, 0.12, 0.8, 1.0, 0.03, c); }
@@ -212,7 +212,7 @@ function sh05_apartment(n) {
   stage.scene.add(cl.mesh([mat('line', '#ddd'), mat('c1', '#c94f4f'), mat('c2', '#3f7fbf'), mat('c3', '#f2c14e'), mat('c4', '#e8e4da')]));
   // sitting on the edges of the lower bunks, feet on the floor
   [[-2.45 + 0.3, 1.0, 90, 41], [-0.85 + 0.3, 0.7, 90, 43], [-0.85 + 0.3, 1.55, 90, 47], [1.95, 1.75 - 0.3, 0, 44]].forEach(([x, y, fc, sd], i) => {
-    const p = Person.random(`s${i}`, sd, { loc: [x, y, 0], facing: fc }); p.poseStand(1); p.sit(1, LOWER); p.rot('head', 1, 14 + i * 3, 0, (i - 1.5) * 12); p.idle(1, n, { arms: false, amount: 0.4, seed: i });
+    const p = Person.random(`s${i}`, sd, { loc: [x, y, 0], facing: fc }); p.poseStand(1); p.sit(1, LOWER); p.rot('spine', 1, 16, 0, 0); p.rot('head', 1, 10 + i * 3, 0, (i - 1.5) * 12); p.idle(1, n, { arms: false, amount: 0.4, seed: i });
   });
   // lying on the upper bunks and the floor mattresses
   lie(Person.random('u1', 42), -2.45, 0.45, UPPER); lie(Person.random('u2', 45), -0.85, 0.45, UPPER); lie(Person.random('f1', 48), 1.1, -2.2, 0.12);

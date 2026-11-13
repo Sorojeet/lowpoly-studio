@@ -100,13 +100,14 @@ export function glassWall(name = 'obs', loc = [0, 0, 0], heading = 0, { w = 6, h
   return Object.assign(root, { glass: g });
 }
 
-export function bunkBed(name = 'bunk', loc = [0, 0, 0], heading = 0, { blanket = ['#7a5fb0', '#4f9d8f'] } = {}) {
+export function bunkBed(name = 'bunk', loc = [0, 0, 0], heading = 0, { blanket = ['#7a5fb0', '#4f9d8f'], upper = 1.6 } = {}) {   // upper: height of the top bunk (room to sit up below)
   const k = new K(name), st = k.c('#5a6068'), mt = k.c('#e4dfd3');
-  for (const sx of [-1, 1]) for (const sy of [-1, 1]) k.b.box(sx * 0.45, sy * 0.95, 0, 0.05, 0.05, 1.8, st);
-  for (const [z, bl] of [[0.35, blanket[0]], [1.25, blanket[1]]]) {
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) k.b.box(sx * 0.45, sy * 0.95, 0, 0.05, 0.05, upper + 0.55, st);
+  for (const [z, bl] of [[0.35, blanket[0]], [upper, blanket[1]]]) {
     k.b.box(0, 0, z, 0.95, 1.95, 0.05, st); k.b.box(0, 0, z + 0.05, 0.88, 1.88, 0.12, mt); k.b.box(0, -0.25, z + 0.17, 0.9, 1.3, 0.04, k.c(bl)); k.b.box(0, 0.75, z + 0.17, 0.55, 0.3, 0.08, k.c('#f4f1e8'));
   }
-  for (let z = 0.5; z < 1.25; z += 0.25) k.b.box(0.45, -1.0, z, 0.05, 0.05, 0.03, st);
+  for (let z = 0.5; z < upper; z += 0.25) k.b.box(0.45, -1.0, z, 0.05, 0.05, 0.03, st);
+  for (const sy of [-1, 1]) k.b.box(0, sy * 0.95, upper + 0.3, 0.9, 0.04, 0.04, st);    // guard rails
   return k.done(loc, heading);
 }
 
